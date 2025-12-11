@@ -48,13 +48,11 @@ public class TradeStreamService {
                             },
                             () -> {
                                 logger.info("Trade stream completed for {}", instrument);
-                                listener.onDisconnect();
                                 activeSubscriptions.remove(instrument);
                             }
                     );
 
             activeSubscriptions.put(instrument, subscription);
-            listener.onConnect();
 
         } catch (Exception e) {
             logger.error("Failed to subscribe to {}: {}", instrument, e.getMessage(), e);
