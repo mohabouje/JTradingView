@@ -25,7 +25,10 @@ public class StreamService {
         }
 
         try {
-            StreamingExchange exchange = exchangeConnectionManager.getOrCreateExchange(instrument.getExchangeId());
+            StreamingExchange exchange = exchangeConnectionManager.getOrCreateExchange(
+                    instrument.getExchangeId(),
+                    instrument.toXChangeCurrencyPair()
+            );
 
             logger.info("Subscribing to trades for {} on {}", instrument.getInternalSymbolId(), instrument.getExchangeId());
 

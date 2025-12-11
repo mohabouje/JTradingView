@@ -5,11 +5,14 @@ import com.github.mohabouje.jtradingview.protocol.Trade;
 import com.github.mohabouje.jtradingview.protocol.Ticker;
 import com.github.mohabouje.jtradingview.streaming.StreamService;
 import com.github.mohabouje.jtradingview.streaming.EventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainWindow extends JFrame {
+    private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
     private static final int REFRESH_RATE_HZ = 20;
     private static final int REFRESH_INTERVAL_MS = 1000 / REFRESH_RATE_HZ;
     
@@ -33,20 +36,21 @@ public class MainWindow extends JFrame {
             var tab = tabbedPane.getOrCreateTab(symbolId);
             tabbedPane.selectTab(symbolId);
             toolbar.setEnabled(false);
+            
             new Thread(() -> {
                 try {
                     streamService.subscribe(instrument, tab);
                 } catch (Exception e) {
+                    logger.error("Failed to subscribe to {}", instrument.getInternalSymbolId(), e);
                     SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                             this,
                             "Failed to subscribe to " + instrument.getInternalSymbolId() + "\n" + e.getMessage(),
                             "Subscription Error",
                             JOptionPane.ERROR_MESSAGE
                     ));
+                } finally {
+                    SwingUtilities.invokeLater(() -> toolbar.setEnabled(true));
                 }
-                SwingUtilities.invokeLater(() -> {
-                    toolbar.setEnabled(true);
-                });
             }, "Subscription-Thread").start();
         });
     }
@@ -84,7 +88,10 @@ public class MainWindow extends JFrame {
     }
 
     public void shutdown() {
-        refreshTimer.stop();
+        logger.info("Shutting down MainWindow");
+        if (refreshTimer != null && refreshTimer.isRunning()) {
+            refreshTimer.stop();
+        }
         streamService.shutdown();
     }
 }

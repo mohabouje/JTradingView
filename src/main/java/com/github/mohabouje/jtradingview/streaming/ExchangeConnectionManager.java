@@ -19,17 +19,21 @@ class ExchangeConnectionManager {
 
     private final Map<ExchangeId, StreamingExchange> exchangeConnections = new ConcurrentHashMap<>();
 
-    public StreamingExchange getOrCreateExchange(ExchangeId exchangeId) {
+    public StreamingExchange getOrCreateExchange(ExchangeId exchangeId, org.knowm.xchange.currency.CurrencyPair initialPair) {
         return exchangeConnections.computeIfAbsent(exchangeId, id -> {
             try {
                 logger.info("Connecting to exchange: {}", id);
 
                 StreamingExchange exchange = StreamingExchangeFactory.INSTANCE.createExchange(getExchangeClass(id));
 
-                ProductSubscription subscription = ProductSubscription.create()
-                        .build();
+                ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
+                if (initialPair != null) {
+                    builder.addTicker(initialPair);
+                }
+                ProductSubscription subscription = builder.build();
 
                 exchange.connect(subscription).blockingAwait();
+                logger.info("Successfully connected to {}", id);
                 return exchange;
             } catch (Exception e) {
                 logger.error("Failed to connect to {}: {}", id, e.getMessage(), e);
