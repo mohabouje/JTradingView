@@ -32,6 +32,13 @@ public class TradeCircularBuffer implements TradeListener {
         return new ArrayList<>(buffer);
     }
 
+    public synchronized Trade getTradeAt(int index) {
+        if (index < 0 || index >= buffer.size()) {
+            return null;
+        }
+        return buffer.toArray(new Trade[0])[index];
+    }
+
     public synchronized int size() {
         return buffer.size();
     }
