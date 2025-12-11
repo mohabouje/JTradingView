@@ -12,7 +12,7 @@ public class TimeAndSalesTabbedPane extends JTabbedPane {
     public TimeAndSalesTab getOrCreateTab(InternalSymbolId symbolId) {
         return tabs.computeIfAbsent(symbolId, id -> {
             TimeAndSalesTab tab = new TimeAndSalesTab();
-            addTab(symbolId.getValue(), tab);
+            addTab(symbolId.value(), tab);
             return tab;
         });
     }

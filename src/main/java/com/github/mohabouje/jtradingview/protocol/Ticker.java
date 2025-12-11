@@ -89,14 +89,6 @@ public class Ticker {
         return null;
     }
 
-    public BigDecimal getSpreadPercent() {
-        if (bid != null && ask != null && lastPrice.compareTo(BigDecimal.ZERO) > 0) {
-            return getSpread().divide(lastPrice, 10, java.math.RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100"));
-        }
-        return null;
-    }
-
     @Override
     public String toString() {
         return "Ticker{" +

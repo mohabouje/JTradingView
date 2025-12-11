@@ -16,7 +16,7 @@ public class Instrument {
     }
 
     private static InternalSymbolId createInternalSymbolId(ExchangeId exchangeId, Currency base, Currency quote) {
-        String internal = String.format("%s:%s/%s", exchangeId.name(), base.getValue(), quote.getValue());
+        String internal = String.format("%s:%s/%s", exchangeId.name(), base.value(), quote.value());
         return InternalSymbolId.of(internal);
     }
 
@@ -37,7 +37,7 @@ public class Instrument {
     }
 
     public org.knowm.xchange.currency.CurrencyPair toXChangeCurrencyPair() {
-        return new org.knowm.xchange.currency.CurrencyPair(base.getValue(), quote.getValue());
+        return new org.knowm.xchange.currency.CurrencyPair(base.value(), quote.value());
     }
 
     public static Builder builder() {

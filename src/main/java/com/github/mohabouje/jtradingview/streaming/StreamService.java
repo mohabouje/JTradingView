@@ -84,15 +84,7 @@ public class StreamService {
         exchangeConnectionManager.disconnectAll();
     }
 
-    private static class Subscription {
-        private final Disposable tradeStream;
-        private final Disposable tickerStream;
-
-        Subscription(Disposable tradeStream, Disposable tickerStream) {
-            this.tradeStream = tradeStream;
-            this.tickerStream = tickerStream;
-        }
-
+    private record Subscription(Disposable tradeStream, Disposable tickerStream) {
         void dispose() {
             if (tradeStream != null) {
                 tradeStream.dispose();
