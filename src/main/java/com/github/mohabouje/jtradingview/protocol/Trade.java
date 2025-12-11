@@ -6,44 +6,44 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class Trade {
-    private final TradeId mTradeId;
-    private final ExchangeId mExchangeId;
-    private final InternalSymbolId mInternalSymbolId;
-    private final BigDecimal mPrice;
-    private final BigDecimal mQuantity;
-    private final OrderSide mSide;
-    private final Instant mTimestamp;
-    private final Instant mReceivedAt; 
-    private final Liquidity mLiquidity;
+    private final TradeId tradeId;
+    private final ExchangeId exchangeId;
+    private final InternalSymbolId internalSymbolId;
+    private final BigDecimal price;
+    private final BigDecimal quantity;
+    private final OrderSide side;
+    private final Instant timestamp;
+    private final Instant receivedAt;
+    private final Liquidity liquidity;
     
     private Trade(Builder builder) {
-        this.mTradeId = builder.mTradeId;
-        this.mExchangeId = builder.mExchangeId;
-        this.mInternalSymbolId = builder.mInternalSymbolId;
-        this.mPrice = builder.mPrice;
-        this.mQuantity = builder.mQuantity;
-        this.mSide = builder.mSide;
-        this.mTimestamp = builder.mTimestamp;
-        this.mReceivedAt = builder.mReceivedAt != null ? builder.mReceivedAt : Instant.now();
-        this.mLiquidity = builder.mLiquidity;
+        this.tradeId = builder.tradeId;
+        this.exchangeId = builder.exchangeId;
+        this.internalSymbolId = builder.internalSymbolId;
+        this.price = builder.price;
+        this.quantity = builder.quantity;
+        this.side = builder.side;
+        this.timestamp = builder.timestamp;
+        this.receivedAt = builder.receivedAt != null ? builder.receivedAt : Instant.now();
+        this.liquidity = builder.liquidity;
     }
     
-    public TradeId getTradeId() { return mTradeId; }
-    public ExchangeId getExchangeId() { return mExchangeId; }
-    public InternalSymbolId getInternalSymbolId() { return mInternalSymbolId; }
-    public BigDecimal getPrice() { return mPrice; }
-    public BigDecimal getQuantity() { return mQuantity; }
-    public OrderSide getSide() { return mSide; }
-    public Instant getTimestamp() { return mTimestamp; }
-    public Instant getReceivedAt() { return mReceivedAt; }
-    public Liquidity getLiquidity() { return mLiquidity; }
+    public TradeId getTradeId() { return tradeId; }
+    public ExchangeId getExchangeId() { return exchangeId; }
+    public InternalSymbolId getInternalSymbolId() { return internalSymbolId; }
+    public BigDecimal getPrice() { return price; }
+    public BigDecimal getQuantity() { return quantity; }
+    public OrderSide getSide() { return side; }
+    public Instant getTimestamp() { return timestamp; }
+    public Instant getReceivedAt() { return receivedAt; }
+    public Liquidity getLiquidity() { return liquidity; }
     
     public long getLatencyMs() {
-        return java.time.temporal.ChronoUnit.MILLIS.between(mTimestamp, mReceivedAt);
+        return java.time.temporal.ChronoUnit.MILLIS.between(timestamp, receivedAt);
     }
     
     public BigDecimal getNotionalValue() {
-        return mPrice.multiply(mQuantity);
+        return price.multiply(quantity);
     }
     
     public static Trade from(org.knowm.xchange.dto.marketdata.Trade xchangeTrade, Instrument instrument) {
@@ -80,69 +80,69 @@ public class Trade {
     }
     
     public static class Builder {
-        private TradeId mTradeId;
-        private ExchangeId mExchangeId;
-        private InternalSymbolId mInternalSymbolId;
-        private BigDecimal mPrice;
-        private BigDecimal mQuantity;
-        private OrderSide mSide;
-        private Instant mTimestamp;
-        private Instant mReceivedAt;
-        private Liquidity mLiquidity;
+        private TradeId tradeId;
+        private ExchangeId exchangeId;
+        private InternalSymbolId internalSymbolId;
+        private BigDecimal price;
+        private BigDecimal quantity;
+        private OrderSide side;
+        private Instant timestamp;
+        private Instant receivedAt;
+        private Liquidity liquidity;
         
         public Builder tradeId(TradeId tradeId) {
-            this.mTradeId = tradeId;
+            this.tradeId = tradeId;
             return this;
         }
         
         public Builder exchangeId(ExchangeId exchangeId) {
-            this.mExchangeId = exchangeId;
+            this.exchangeId = exchangeId;
             return this;
         }
         
         public Builder internalSymbolId(InternalSymbolId internalSymbolId) {
-            this.mInternalSymbolId = internalSymbolId;
+            this.internalSymbolId = internalSymbolId;
             return this;
         }
         
         public Builder price(BigDecimal price) {
-            this.mPrice = price;
+            this.price = price;
             return this;
         }
         
         public Builder quantity(BigDecimal quantity) {
-            this.mQuantity = quantity;
+            this.quantity = quantity;
             return this;
         }
         
         public Builder side(OrderSide side) {
-            this.mSide = side;
+            this.side = side;
             return this;
         }
         
         public Builder timestamp(Instant timestamp) {
-            this.mTimestamp = timestamp;
+            this.timestamp = timestamp;
             return this;
         }
         
         public Builder receivedAt(Instant receivedAt) {
-            this.mReceivedAt = receivedAt;
+            this.receivedAt = receivedAt;
             return this;
         }
         
         public Builder liquidity(Liquidity liquidity) {
-            this.mLiquidity = liquidity;
+            this.liquidity = liquidity;
             return this;
         }
         
         public Trade build() {
-            Objects.requireNonNull(mTradeId, "tradeId is required");
-            Objects.requireNonNull(mExchangeId, "exchangeId is required");
-            Objects.requireNonNull(mInternalSymbolId, "internalSymbolId is required");
-            Objects.requireNonNull(mPrice, "price is required");
-            Objects.requireNonNull(mQuantity, "quantity is required");
-            Objects.requireNonNull(mSide, "side is required");
-            Objects.requireNonNull(mTimestamp, "timestamp is required");
+            Objects.requireNonNull(tradeId, "tradeId is required");
+            Objects.requireNonNull(exchangeId, "exchangeId is required");
+            Objects.requireNonNull(internalSymbolId, "internalSymbolId is required");
+            Objects.requireNonNull(price, "price is required");
+            Objects.requireNonNull(quantity, "quantity is required");
+            Objects.requireNonNull(side, "side is required");
+            Objects.requireNonNull(timestamp, "timestamp is required");
             return new Trade(this);
         }
     }
@@ -150,14 +150,14 @@ public class Trade {
     @Override
     public String toString() {
         return "Trade{" +
-                "TradeId=" + mTradeId +
-                ", ExchangeId=" + mExchangeId +
-                ", InternalSymbolId=" + mInternalSymbolId +
-                ", Price=" + mPrice +
-                ", Quantity=" + mQuantity +
-                ", Side=" + mSide +
-                ", Timestamp=" + mTimestamp +
-                ", Liquidity=" + mLiquidity +
+                "tradeId=" + tradeId +
+                ", exchangeId=" + exchangeId +
+                ", internalSymbolId=" + internalSymbolId +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", side=" + side +
+                ", timestamp=" + timestamp +
+                ", liquidity=" + liquidity +
                 '}';
     }
     
@@ -166,13 +166,13 @@ public class Trade {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trade trade = (Trade) o;
-        return Objects.equals(mInternalSymbolId, trade.mInternalSymbolId) &&
-                Objects.equals(mTradeId, trade.mTradeId) &&
-                mExchangeId == trade.mExchangeId;
+        return Objects.equals(internalSymbolId, trade.internalSymbolId) &&
+                Objects.equals(tradeId, trade.tradeId) &&
+                exchangeId == trade.exchangeId;
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(mTradeId, mExchangeId, mInternalSymbolId);
+        return Objects.hash(tradeId, exchangeId, internalSymbolId);
     }
 }

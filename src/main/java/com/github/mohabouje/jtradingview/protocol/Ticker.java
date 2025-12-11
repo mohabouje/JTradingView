@@ -6,92 +6,92 @@ import java.util.Objects;
 
 
 public class Ticker {
-    private final InternalSymbolId mInternalSymbolId;
-    private final ExchangeId mExchangeId;
-    private final BigDecimal mLastPrice;
-    private final BigDecimal mChange;
-    private final BigDecimal mPercentageChange;
-    private final BigDecimal mHigh;
-    private final BigDecimal mLow;
-    private final BigDecimal mVolume;
-    private final BigDecimal mVolumeQuote;
-    private final BigDecimal mBid;
-    private final BigDecimal mAsk;
-    private final Instant mTimestamp;
+    private final InternalSymbolId internalSymbolId;
+    private final ExchangeId exchangeId;
+    private final BigDecimal lastPrice;
+    private final BigDecimal change;
+    private final BigDecimal percentageChange;
+    private final BigDecimal high;
+    private final BigDecimal low;
+    private final BigDecimal volume;
+    private final BigDecimal volumeQuote;
+    private final BigDecimal bid;
+    private final BigDecimal ask;
+    private final Instant timestamp;
 
     private Ticker(Builder builder) {
-        this.mInternalSymbolId = Objects.requireNonNull(builder.mInternalSymbolId, "internalSymbolId cannot be null");
-        this.mExchangeId = Objects.requireNonNull(builder.mExchangeId, "exchangeId cannot be null");
-        this.mLastPrice = Objects.requireNonNull(builder.mLastPrice, "lastPrice cannot be null");
-        this.mChange = builder.mChange;
-        this.mPercentageChange = builder.mPercentageChange;
-        this.mHigh = builder.mHigh;
-        this.mLow = builder.mLow;
-        this.mVolume = builder.mVolume;
-        this.mVolumeQuote = builder.mVolumeQuote;
-        this.mBid = builder.mBid;
-        this.mAsk = builder.mAsk;
-        this.mTimestamp = builder.mTimestamp != null ? builder.mTimestamp : Instant.now();
+        this.internalSymbolId = Objects.requireNonNull(builder.internalSymbolId, "internalSymbolId cannot be null");
+        this.exchangeId = Objects.requireNonNull(builder.exchangeId, "exchangeId cannot be null");
+        this.lastPrice = Objects.requireNonNull(builder.lastPrice, "lastPrice cannot be null");
+        this.change = builder.change;
+        this.percentageChange = builder.percentageChange;
+        this.high = builder.high;
+        this.low = builder.low;
+        this.volume = builder.volume;
+        this.volumeQuote = builder.volumeQuote;
+        this.bid = builder.bid;
+        this.ask = builder.ask;
+        this.timestamp = builder.timestamp != null ? builder.timestamp : Instant.now();
     }
 
     public InternalSymbolId getInternalSymbolId() {
-        return mInternalSymbolId;
+        return internalSymbolId;
     }
 
     public ExchangeId getExchangeId() {
-        return mExchangeId;
+        return exchangeId;
     }
 
     public BigDecimal getLastPrice() {
-        return mLastPrice;
+        return lastPrice;
     }
 
     public BigDecimal getChange() {
-        return mChange;
+        return change;
     }
 
     public BigDecimal getPercentageChange() {
-        return mPercentageChange;
+        return percentageChange;
     }
 
     public BigDecimal getHigh() {
-        return mHigh;
+        return high;
     }
 
     public BigDecimal getLow() {
-        return mLow;
+        return low;
     }
 
     public BigDecimal getVolume() {
-        return mVolume;
+        return volume;
     }
 
     public BigDecimal getVolumeQuote() {
-        return mVolumeQuote;
+        return volumeQuote;
     }
 
     public BigDecimal getBid() {
-        return mBid;
+        return bid;
     }
 
     public BigDecimal getAsk() {
-        return mAsk;
+        return ask;
     }
 
     public Instant getTimestamp() {
-        return mTimestamp;
+        return timestamp;
     }
 
     public BigDecimal getSpread() {
-        if (mBid != null && mAsk != null) {
-            return mAsk.subtract(mBid);
+        if (bid != null && ask != null) {
+            return ask.subtract(bid);
         }
         return null;
     }
 
     public BigDecimal getSpreadPercent() {
-        if (mBid != null && mAsk != null && mLastPrice.compareTo(BigDecimal.ZERO) > 0) {
-            return getSpread().divide(mLastPrice, 10, java.math.RoundingMode.HALF_UP)
+        if (bid != null && ask != null && lastPrice.compareTo(BigDecimal.ZERO) > 0) {
+            return getSpread().divide(lastPrice, 10, java.math.RoundingMode.HALF_UP)
                     .multiply(new BigDecimal("100"));
         }
         return null;
@@ -100,18 +100,18 @@ public class Ticker {
     @Override
     public String toString() {
         return "Ticker{" +
-                "internalSymbolId=" + mInternalSymbolId +
-                ", exchangeId=" + mExchangeId +
-                ", lastPrice=" + mLastPrice +
-                ", change=" + mChange +
-                ", percentageChange=" + mPercentageChange +
-                ", high=" + mHigh +
-                ", low=" + mLow +
-                ", volume=" + mVolume +
-                ", volumeQuote=" + mVolumeQuote +
-                ", bid=" + mBid +
-                ", ask=" + mAsk +
-                ", timestamp=" + mTimestamp +
+                "internalSymbolId=" + internalSymbolId +
+                ", exchangeId=" + exchangeId +
+                ", lastPrice=" + lastPrice +
+                ", change=" + change +
+                ", percentageChange=" + percentageChange +
+                ", high=" + high +
+                ", low=" + low +
+                ", volume=" + volume +
+                ", volumeQuote=" + volumeQuote +
+                ", bid=" + bid +
+                ", ask=" + ask +
+                ", timestamp=" + timestamp +
                 '}';
     }
 
@@ -120,72 +120,76 @@ public class Ticker {
     }
 
     public static class Builder {
-        private InternalSymbolId mInternalSymbolId;
-        private ExchangeId mExchangeId;
-        private BigDecimal mLastPrice;
-        private BigDecimal mChange;
-        private BigDecimal mPercentageChange;
-        private BigDecimal mHigh;
-        private BigDecimal mLow;
-        private BigDecimal mVolume;
-        private BigDecimal mVolumeQuote;
-        private BigDecimal mBid;
-        private BigDecimal mAsk;
-        private Instant mTimestamp;
+        private InternalSymbolId internalSymbolId;
+        private ExchangeId exchangeId;
+        private BigDecimal lastPrice;
+        private BigDecimal change;
+        private BigDecimal percentageChange;
+        private BigDecimal high;
+        private BigDecimal low;
+        private BigDecimal volume;
+        private BigDecimal volumeQuote;
+        private BigDecimal bid;
+        private BigDecimal ask;
+        private Instant timestamp;
 
         public Builder internalSymbolId(InternalSymbolId internalSymbolId) {
-            this.mInternalSymbolId = internalSymbolId;
+            this.internalSymbolId = internalSymbolId;
             return this;
         }
 
         public Builder exchangeId(ExchangeId exchangeId) {
-            this.mExchangeId = exchangeId;
+            this.exchangeId = exchangeId;
             return this;
         }
 
         public Builder lastPrice(BigDecimal lastPrice) {
-            this.mLastPrice = lastPrice;
+            this.lastPrice = lastPrice;
             return this;
         }
 
+        public Builder change(BigDecimal change) {
+            this.change = change;
+            return this;
+        }
 
         public Builder percentageChange(BigDecimal percentageChange) {
-            this.mPercentageChange = percentageChange;
+            this.percentageChange = percentageChange;
             return this;
         }
 
         public Builder high(BigDecimal high) {
-            this.mHigh = high;
+            this.high = high;
             return this;
         }
 
         public Builder low(BigDecimal low) {
-            this.mLow = low;
+            this.low = low;
             return this;
         }
 
         public Builder volume(BigDecimal volume) {
-            this.mVolume = volume;
+            this.volume = volume;
             return this;
         }
 
         public Builder volumeQuote(BigDecimal volumeQuote) {
-            this.mVolumeQuote = volumeQuote;
+            this.volumeQuote = volumeQuote;
             return this;
         }
 
         public Builder bid(BigDecimal bid) {
-            this.mBid = bid;
+            this.bid = bid;
             return this;
         }
 
         public Builder ask(BigDecimal ask) {
-            this.mAsk = ask;
+            this.ask = ask;
             return this;
         }
 
         public Builder timestamp(Instant timestamp) {
-            this.mTimestamp = timestamp;
+            this.timestamp = timestamp;
             return this;
         }
 

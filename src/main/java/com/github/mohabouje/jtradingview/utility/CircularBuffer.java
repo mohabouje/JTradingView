@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CircularBuffer<T> {
+public class CircularBuffer<T> {    
     private final Object[] buffer;
     private final int capacity;
     private int head = 0;
     private int size = 0;
 
-    public CircularBuffer() {
-        this(1024);
-    }
 
     public CircularBuffer(int capacity) {
         this.buffer = new Object[capacity];

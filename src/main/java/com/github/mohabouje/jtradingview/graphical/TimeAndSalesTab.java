@@ -13,10 +13,11 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
     private final TimeAndSalesTable table;
     private final TimeAndSalesHeader header;
     private final TimeAndSalesChart chart;
+    private static final int BUFFER_CAPACITY = 1024;
 
     public TimeAndSalesTab() {
-        this.tradeBuffer  = new CircularBuffer<>();
-        this.tickerBuffer = new CircularBuffer<>(1024);
+        this.tradeBuffer = new CircularBuffer<>(BUFFER_CAPACITY);
+        this.tickerBuffer = new CircularBuffer<>(BUFFER_CAPACITY);
         this.table = new TimeAndSalesTable(tradeBuffer);
         this.header = new TimeAndSalesHeader(tickerBuffer);
         this.chart = new TimeAndSalesChart(tradeBuffer, tickerBuffer);
