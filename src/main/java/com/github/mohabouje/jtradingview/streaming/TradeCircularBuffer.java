@@ -1,65 +1,73 @@
 package com.github.mohabouje.jtradingview.streaming;
 
 import com.github.mohabouje.jtradingview.protocol.Trade;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TradeCircularBuffer implements TradeListener {
-    private final CircularFifoQueue<Trade> buffer;
-    private volatile Throwable lastError = null;
+public class TradeCircularBuffer  {
+    private final Trade[] buffer;
+    private final int capacity;
+    private int head = 0;
+    private int size = 0;
 
     public TradeCircularBuffer() {
         this(1024);
     }
 
     public TradeCircularBuffer(int capacity) {
-        this.buffer = new CircularFifoQueue<>(capacity);
+        this.buffer = new Trade[capacity];
+        this.capacity = capacity;
     }
 
-    @Override
     public synchronized void onTrade(Trade trade) {
-        buffer.add(trade);
+        buffer[head] = trade;
+        head = (head + 1) % capacity;
+        if (size < capacity) {
+            size++;
+        }
     }
 
-    @Override
-    public synchronized void onError(Throwable throwable) {
-        this.lastError = throwable;
-    }
 
     public synchronized List<Trade> getTrades() {
-        return new ArrayList<>(buffer);
+        List<Trade> trades = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            trades.add(getTradeAt(i));
+        }
+        return trades;
     }
 
     public synchronized Trade getTradeAt(int index) {
-        if (index < 0 || index >= buffer.size()) {
+        if (index < 0 || index >= size) {
             return null;
         }
-        return buffer.toArray(new Trade[0])[index];
+        int actualIndex = (head - 1 - index + capacity * 2) % capacity;
+        return buffer[actualIndex];
     }
 
     public synchronized int size() {
-        return buffer.size();
+        return size;
     }
 
     public synchronized boolean isEmpty() {
-        return buffer.isEmpty();
+        return size == 0;
     }
 
     public synchronized boolean isFull() {
-        return buffer.isFull();
+        return size == capacity;
     }
 
     public synchronized void clear() {
-        buffer.clear();
+        head = 0;
+        size = 0;
+        for (int i = 0; i < capacity; i++) {
+            buffer[i] = null;
+        }
     }
 
     public int capacity() {
-        return buffer.maxSize();
+        return capacity;
     }
 
-    public Throwable getLastError() {
-        return lastError;
-    }
 }
+
