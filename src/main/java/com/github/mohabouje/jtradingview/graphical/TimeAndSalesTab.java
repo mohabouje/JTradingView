@@ -30,19 +30,22 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
     @Override
     public void onTrade(Trade trade) {
         tradeBuffer.add(trade);
-        table.refresh();
     }
 
     @Override
     public void onTicker(Ticker ticker) {
         tickerBuffer.add(ticker);
-        header.refresh();
-        chart.refresh();
     }
 
     @Override
     public void onError(Throwable throwable) {
         throw new RuntimeException(throwable);
+    }
+
+    public void refresh() {
+        table.refresh();
+        header.refresh();
+        chart.refresh();
     }
 
 }

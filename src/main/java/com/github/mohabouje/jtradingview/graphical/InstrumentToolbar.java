@@ -11,15 +11,18 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class InstrumentToolbar extends JToolBar {
-    private final JTextField baseField;
-    private final JTextField quoteField;
+    private static final String[] TOP_COINS = {"BTC", "ETH", "XRP", "ADA", "SOL", "DOGE", "LINK", "LTC", "MATIC", "UNI"};
+    private static final String[] QUOTE_CURRENCIES = {"USD", "USDT", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF"};
+    
+    private final JComboBox<String> baseComboBox;
+    private final JComboBox<String> quoteComboBox;
     private final JComboBox<ExchangeId> exchangeComboBox;
     private final JButton subscribeButton;
     private final List<Consumer<Instrument>> listeners;
 
     public InstrumentToolbar() {
-        this.baseField = new JTextField(8);
-        this.quoteField = new JTextField(8);
+        this.baseComboBox = new JComboBox<>(TOP_COINS);
+        this.quoteComboBox = new JComboBox<>(QUOTE_CURRENCIES);
         this.exchangeComboBox = new JComboBox<>(ExchangeId.values());
         this.subscribeButton = new JButton("Subscribe");
         this.listeners = new ArrayList<>();
@@ -37,16 +40,21 @@ public class InstrumentToolbar extends JToolBar {
 
         add(new JLabel("Base: "));
         add(Box.createHorizontalStrut(5));
-        add(baseField);
+        baseComboBox.setMaximumSize(new Dimension(100, 30));
+        baseComboBox.setSelectedIndex(0);
+        add(baseComboBox);
         add(Box.createHorizontalStrut(15));
         
         add(new JLabel("Quote: "));
         add(Box.createHorizontalStrut(5));
-        add(quoteField);
+        quoteComboBox.setMaximumSize(new Dimension(100, 30));
+        quoteComboBox.setSelectedIndex(0);
+        add(quoteComboBox);
         add(Box.createHorizontalStrut(20));
         
         add(new JLabel("Exchange: "));
         add(Box.createHorizontalStrut(5));
+        exchangeComboBox.setMaximumSize(new Dimension(120, 30));
         add(exchangeComboBox);
         add(Box.createHorizontalStrut(25));
         
@@ -59,23 +67,19 @@ public class InstrumentToolbar extends JToolBar {
         
         add(subscribeButton);
         add(Box.createHorizontalGlue());
-        
-        baseField.setMaximumSize(new Dimension(100, 30));
-        quoteField.setMaximumSize(new Dimension(100, 30));
-        exchangeComboBox.setMaximumSize(new Dimension(120, 30));
     }
 
     private void attachListeners() {
         subscribeButton.addActionListener(e -> handleSubscribe());
-        baseField.addActionListener(e -> handleSubscribe());
-        quoteField.addActionListener(e -> handleSubscribe());
+        baseComboBox.addActionListener(e -> handleSubscribe());
+        quoteComboBox.addActionListener(e -> handleSubscribe());
     }
 
     private void handleSubscribe() {
-        String base = baseField.getText().trim();
-        String quote = quoteField.getText().trim();
+        String base = (String) baseComboBox.getSelectedItem();
+        String quote = (String) quoteComboBox.getSelectedItem();
         
-        if (base.isEmpty() || quote.isEmpty()) {
+        if (base == null || quote == null) {
             return;
         }
 
@@ -90,8 +94,6 @@ public class InstrumentToolbar extends JToolBar {
                                                     .build();
 
         notifyListeners(instrument);
-        baseField.setText("");
-        quoteField.setText("");
     }
 
     public void addSubscriptionListener(Consumer<Instrument> listener) {
@@ -107,11 +109,11 @@ public class InstrumentToolbar extends JToolBar {
     }
 
     public void setBase(String base) {
-        baseField.setText(base);
+        baseComboBox.setSelectedItem(base);
     }
 
     public void setQuote(String quote) {
-        quoteField.setText(quote);
+        quoteComboBox.setSelectedItem(quote);
     }
 
     public void setExchange(ExchangeId exchange) {

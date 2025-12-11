@@ -27,5 +27,9 @@ public class TimeAndSalesTabbedPane extends JTabbedPane {
             setSelectedComponent(tab);
         }
     }
+
+    public void refresh() {
+        tabs.values().forEach(TimeAndSalesTab::refresh);
+    }
 }
 

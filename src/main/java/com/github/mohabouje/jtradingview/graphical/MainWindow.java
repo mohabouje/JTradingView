@@ -10,9 +10,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainWindow extends JFrame {
+    private static final int REFRESH_RATE_HZ = 20;
+    private static final int REFRESH_INTERVAL_MS = 1000 / REFRESH_RATE_HZ;
+    
     private final InstrumentToolbar toolbar;
     private final StreamService streamService;
     private final TimeAndSalesTabbedPane tabbedPane;
+    private Timer refreshTimer;
 
     public MainWindow() {
         super("JTradingView - Time and Sales");
@@ -22,6 +26,8 @@ public class MainWindow extends JFrame {
         this.tabbedPane = new TimeAndSalesTabbedPane();
 
         initializeWindow();
+        startRefreshTimer();
+        
         toolbar.addSubscriptionListener(instrument -> {
             var symbolId = instrument.getInternalSymbolId();
             var tab = tabbedPane.getOrCreateTab(symbolId);
@@ -43,6 +49,11 @@ public class MainWindow extends JFrame {
                 });
             }, "Subscription-Thread").start();
         });
+    }
+
+    private void startRefreshTimer() {
+        refreshTimer = new Timer(REFRESH_INTERVAL_MS, e -> tabbedPane.refresh());
+        refreshTimer.start();
     }
 
     public TimeAndSalesTab tabFor(Instrument instrument) {
@@ -73,6 +84,7 @@ public class MainWindow extends JFrame {
     }
 
     public void shutdown() {
+        refreshTimer.stop();
         streamService.shutdown();
     }
 }
