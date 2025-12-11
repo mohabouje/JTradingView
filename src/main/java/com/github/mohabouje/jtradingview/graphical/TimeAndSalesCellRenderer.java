@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 public class TimeAndSalesCellRenderer extends DefaultTableCellRenderer {
-    private static final int ALPHA = 140;
+    private static final int ALPHA = 80;
     private static final Color BUY_COLOR = new Color(0, 160, 0, ALPHA);
     private static final Color SELL_COLOR = new Color(200, 0, 0, ALPHA);
     private static final Color DEFAULT_ROW_COLOR = Color.WHITE;

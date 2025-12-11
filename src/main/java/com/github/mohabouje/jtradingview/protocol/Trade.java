@@ -13,6 +13,7 @@ public class Trade {
     private final BigDecimal mQuantity;
     private final OrderSide mSide;
     private final Instant mTimestamp;
+    private final Instant mReceivedAt; 
     private final Liquidity mLiquidity;
     
     private Trade(Builder builder) {
@@ -23,6 +24,7 @@ public class Trade {
         this.mQuantity = builder.mQuantity;
         this.mSide = builder.mSide;
         this.mTimestamp = builder.mTimestamp;
+        this.mReceivedAt = builder.mReceivedAt != null ? builder.mReceivedAt : Instant.now();
         this.mLiquidity = builder.mLiquidity;
     }
     
@@ -33,7 +35,12 @@ public class Trade {
     public BigDecimal getQuantity() { return mQuantity; }
     public OrderSide getSide() { return mSide; }
     public Instant getTimestamp() { return mTimestamp; }
+    public Instant getReceivedAt() { return mReceivedAt; }
     public Liquidity getLiquidity() { return mLiquidity; }
+    
+    public long getLatencyMs() {
+        return java.time.temporal.ChronoUnit.MILLIS.between(mTimestamp, mReceivedAt);
+    }
     
     public BigDecimal getNotionalValue() {
         return mPrice.multiply(mQuantity);
@@ -80,6 +87,7 @@ public class Trade {
         private BigDecimal mQuantity;
         private OrderSide mSide;
         private Instant mTimestamp;
+        private Instant mReceivedAt;
         private Liquidity mLiquidity;
         
         public Builder tradeId(TradeId tradeId) {
@@ -114,6 +122,11 @@ public class Trade {
         
         public Builder timestamp(Instant timestamp) {
             this.mTimestamp = timestamp;
+            return this;
+        }
+        
+        public Builder receivedAt(Instant receivedAt) {
+            this.mReceivedAt = receivedAt;
             return this;
         }
         

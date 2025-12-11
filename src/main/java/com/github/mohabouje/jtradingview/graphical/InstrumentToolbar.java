@@ -31,20 +31,34 @@ public class InstrumentToolbar extends JToolBar {
     private void initializeToolbar() {
         setFloatable(false);
         setRollover(true);
+        setBackground(new Color(240, 240, 240));
+
+        add(Box.createHorizontalGlue());
 
         add(new JLabel("Base: "));
-        add(baseField);
         add(Box.createHorizontalStrut(5));
+        add(baseField);
+        add(Box.createHorizontalStrut(15));
         
         add(new JLabel("Quote: "));
+        add(Box.createHorizontalStrut(5));
         add(quoteField);
-        add(Box.createHorizontalStrut(10));
+        add(Box.createHorizontalStrut(20));
         
         add(new JLabel("Exchange: "));
+        add(Box.createHorizontalStrut(5));
         add(exchangeComboBox);
-        add(Box.createHorizontalStrut(10));
+        add(Box.createHorizontalStrut(25));
+        
+        subscribeButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        subscribeButton.setPreferredSize(new Dimension(100, 32));
+        subscribeButton.setBackground(new Color(0, 120, 215));
+        subscribeButton.setForeground(Color.WHITE);
+        subscribeButton.setFocusPainted(false);
+        subscribeButton.setBorderPainted(false);
         
         add(subscribeButton);
+        add(Box.createHorizontalGlue());
         
         baseField.setMaximumSize(new Dimension(100, 30));
         quoteField.setMaximumSize(new Dimension(100, 30));
