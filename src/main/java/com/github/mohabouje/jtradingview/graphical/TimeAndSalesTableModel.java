@@ -8,9 +8,9 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeAndSalesTableModel extends AbstractTableModel {
     private static final String[] COLUMN_NAMES = {"Time", "Exchange", "Symbol", "Side", "Price", "Quantity", "Notional"};
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
     
     private final CircularBuffer<Trade> buffer;
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     public TimeAndSalesTableModel(CircularBuffer<Trade> buffer) {
         this.buffer = buffer;
@@ -43,7 +43,7 @@ public class TimeAndSalesTableModel extends AbstractTableModel {
         }
 
         return switch (columnIndex) {
-            case 0 -> trade.getTimestamp().atZone(java.time.ZoneId.systemDefault()).toLocalTime().format(timeFormatter);
+            case 0 -> trade.getTimestamp().atZone(java.time.ZoneId.systemDefault()).toLocalTime().format(TIME_FORMATTER);
             case 1 -> trade.getExchangeId();
             case 2 -> trade.getInternalSymbolId();
             case 3 -> trade.getSide();
