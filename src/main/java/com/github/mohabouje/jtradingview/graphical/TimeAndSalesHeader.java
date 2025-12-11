@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TimeAndSalesHeader extends JPanel {
+    private static final Color BG_COLOR = new Color(240, 240, 240);
+    
     private final JLabel lastTradeLabel;
     private final JLabel minPriceLabel;
     private final JLabel maxPriceLabel;
@@ -27,31 +29,45 @@ public class TimeAndSalesHeader extends JPanel {
         this.bidLabel = new JLabel("Bid: --");
         this.askLabel = new JLabel("Ask: --");
 
-        setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 245));
-        setPreferredSize(new Dimension(0, 40));
+        setLayout(new GridBagLayout());
+        setBackground(BG_COLOR);
+        setPreferredSize(new Dimension(0, 50));
 
-        lastTradeLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));        
-        minPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        maxPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        volumeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        bidLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        askLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lastTradeLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lastTradeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        minPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        minPriceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        maxPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        maxPriceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        volumeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        volumeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        bidLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        bidLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        askLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        askLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 2));
-        rightPanel.setBackground(new Color(245, 245, 245));
-        rightPanel.add(minPriceLabel);
-        rightPanel.add(maxPriceLabel);
-        rightPanel.add(volumeLabel);
-        rightPanel.add(bidLabel);
-        rightPanel.add(askLabel);
-        rightPanel.add(volumeLabel);
-        rightPanel.add(new JSeparator(SwingConstants.VERTICAL));
-        rightPanel.add(new JLabel("Last:"));
-        rightPanel.add(lastTradeLabel);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(5, 10, 5, 10);
 
-        add(rightPanel, BorderLayout.EAST);
+        gbc.gridx = 0;
+        add(minPriceLabel, gbc);
+        gbc.gridx = 1;
+        add(maxPriceLabel, gbc);
+        gbc.gridx = 2;
+        add(volumeLabel, gbc);
+        gbc.gridx = 3;
+        add(bidLabel, gbc);
+        gbc.gridx = 4;
+        add(askLabel, gbc);
+        gbc.gridx = 5;
+        add(new JSeparator(SwingConstants.VERTICAL), gbc);
+        gbc.gridx = 6;
+        add(new JLabel("Last:"), gbc);
+        gbc.gridx = 7;
+        add(lastTradeLabel, gbc);
     }
 
 

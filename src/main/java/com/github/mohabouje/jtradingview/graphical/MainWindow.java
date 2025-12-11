@@ -51,11 +51,15 @@ public class MainWindow extends JFrame {
 
     private void initializeWindow() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        mainPanel.setBackground(new Color(240, 240, 240));
+        
+        mainPanel.add(toolbar, BorderLayout.NORTH);
+        mainPanel.add(tabbedPane, BorderLayout.CENTER);
 
-        add(toolbar, BorderLayout.NORTH);
-        add(tabbedPane, BorderLayout.CENTER);
-
+        add(mainPanel);
         setSize(1200, 800);
         setLocationRelativeTo(null);
     }
