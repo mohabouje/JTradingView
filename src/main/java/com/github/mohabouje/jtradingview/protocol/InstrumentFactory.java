@@ -1,5 +1,6 @@
 package com.github.mohabouje.jtradingview.protocol;
 
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,22 +8,13 @@ import java.util.regex.Pattern;
 public final class InstrumentFactory {
     private static final Pattern SLASH_PATTERN = Pattern.compile("([A-Z]+)/([A-Z]+)");
     private static final Pattern DASH_PATTERN = Pattern.compile("([A-Z]+)-([A-Z]+)");
-    private static final Set<String> KNOWN_BASE_CURRENCIES = Set.of(
+    public  static final List<String> BASE_CURRENCIES = List.of(
             "BTC", "ETH", "LTC", "XRP", "BCH", "EOS", "XLM", "ADA", "TRX", "BNB",
             "DOT", "LINK", "UNI", "MATIC", "AVAX", "ATOM", "SOL", "DOGE", "SHIB"
     );
-
-    public static Instrument binance(String symbol) {
-        return create(ExchangeId.BINANCE, symbol);
-    }
-
-    public static Instrument bybit(String symbol) {
-        return create(ExchangeId.BYBIT, symbol);
-    }
-
-    public static Instrument kraken(String symbol) {
-        return create(ExchangeId.KRAKEN, symbol);
-    }
+    public static final List<String> QUOTE_CURRENCIES = List.of(
+            "USD", "USDT", "USDC", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY"
+    );
 
     public static Instrument create(ExchangeId exchangeId, String symbol) {
         String normalized = symbol.toUpperCase();
@@ -45,7 +37,7 @@ public final class InstrumentFactory {
                     .build();
         }
 
-        for (String baseCurrency : KNOWN_BASE_CURRENCIES) {
+        for (String baseCurrency : BASE_CURRENCIES) {
             if (normalized.startsWith(baseCurrency) && normalized.length() > baseCurrency.length()) {
                 String quoteCurrency = normalized.substring(baseCurrency.length());
                 return Instrument.builder()

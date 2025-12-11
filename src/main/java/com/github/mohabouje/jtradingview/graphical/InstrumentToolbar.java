@@ -3,6 +3,7 @@ package com.github.mohabouje.jtradingview.graphical;
 import com.github.mohabouje.jtradingview.protocol.Currency;
 import com.github.mohabouje.jtradingview.protocol.ExchangeId;
 import com.github.mohabouje.jtradingview.protocol.Instrument;
+import com.github.mohabouje.jtradingview.protocol.InstrumentFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +12,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class InstrumentToolbar extends JToolBar {
-    private static final String[] TOP_COINS = {"BTC", "ETH", "XRP", "ADA", "SOL", "DOGE", "LINK", "LTC", "MATIC", "UNI"};
-    private static final String[] QUOTE_CURRENCIES = {"USD", "USDT", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF"};
-    
     private final JComboBox<String> baseComboBox;
     private final JComboBox<String> quoteComboBox;
     private final JComboBox<ExchangeId> exchangeComboBox;
@@ -21,8 +19,8 @@ public class InstrumentToolbar extends JToolBar {
     private final List<Consumer<Instrument>> listeners;
 
     public InstrumentToolbar() {
-        this.baseComboBox = new JComboBox<>(TOP_COINS);
-        this.quoteComboBox = new JComboBox<>(QUOTE_CURRENCIES);
+        this.baseComboBox = new JComboBox<>(InstrumentFactory.BASE_CURRENCIES.toArray(new String[0]));
+        this.quoteComboBox = new JComboBox<>(InstrumentFactory.QUOTE_CURRENCIES.toArray(new String[0]));
         this.exchangeComboBox = new JComboBox<>(ExchangeId.values());
         this.subscribeButton = new JButton("Subscribe");
         this.listeners = new ArrayList<>();
@@ -71,8 +69,6 @@ public class InstrumentToolbar extends JToolBar {
 
     private void attachListeners() {
         subscribeButton.addActionListener(e -> handleSubscribe());
-        baseComboBox.addActionListener(e -> handleSubscribe());
-        quoteComboBox.addActionListener(e -> handleSubscribe());
     }
 
     private void handleSubscribe() {
