@@ -35,6 +35,7 @@ public class TradeStreamService {
                             trade -> {
                                 try {
                                     Trade protocolTrade = Trade.from(trade, instrument);
+                                    logger.debug("Received trade for {}: {}", instrument, protocolTrade);
                                     listener.onTrade(protocolTrade);
                                 } catch (Exception e) {
                                     logger.error("Error processing trade for {}: {}", instrument, e.getMessage(), e);

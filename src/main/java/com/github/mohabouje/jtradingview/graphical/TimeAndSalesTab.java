@@ -7,14 +7,18 @@ import javax.swing.*;
 public class TimeAndSalesTab extends JScrollPane {
     private final TradeCircularBuffer buffer;
     private final TimeAndSalesTable table;
+    private final Timer refreshTimer;
 
     public TimeAndSalesTab() {
         this.buffer = new TradeCircularBuffer();
         this.table = new TimeAndSalesTable(buffer);
+        this.refreshTimer = new Timer(50, e -> refresh());
         
         setViewportView(table);
         setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        refreshTimer.start();
     }
 
     public TradeCircularBuffer getBuffer() {
