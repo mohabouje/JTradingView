@@ -8,14 +8,16 @@ import com.github.mohabouje.jtradingview.utility.CircularBuffer;
 import javax.swing.*;
 
 public class TimeAndSalesTab extends JPanel implements EventListener {
-    private final CircularBuffer<Trade> buffer;
+    private final CircularBuffer<Trade> tradeBuffer;
+    private final CircularBuffer<Ticker> tickerBuffer;
     private final TimeAndSalesTable table;
     private final TimeAndSalesHeader header;
 
     public TimeAndSalesTab() {
-        this.buffer = new CircularBuffer<>();
-        this.table = new TimeAndSalesTable(buffer);
-        this.header = new TimeAndSalesHeader();
+        this.tradeBuffer  = new CircularBuffer<>();
+        this.tickerBuffer = new CircularBuffer<>(1024);
+        this.table = new TimeAndSalesTable(tradeBuffer);
+        this.header = new TimeAndSalesHeader(tickerBuffer);
 
         setLayout(new java.awt.BorderLayout());
         add(header, java.awt.BorderLayout.NORTH);
@@ -24,13 +26,13 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
 
     @Override
     public void onTrade(Trade trade) {
-        buffer.add(trade);
+        tradeBuffer.add(trade);
         table.refresh();
     }
 
     @Override
     public void onTicker(Ticker ticker) {
-        this.header.onTicker(ticker);
+        tickerBuffer.add(ticker);
         header.refresh();
     }
 

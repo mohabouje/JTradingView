@@ -15,9 +15,11 @@ public class TimeAndSalesHeader extends JPanel {
     private final JLabel volumeLabel;
     private final JLabel bidLabel;
     private final JLabel askLabel;
-    private Ticker ticker = null;
+    private final CircularBuffer<Ticker> buffer;
 
-    public TimeAndSalesHeader() {
+
+    public TimeAndSalesHeader(CircularBuffer<Ticker> buffer) {
+        this.buffer = buffer;
         this.lastTradeLabel = new JLabel("--");
         this.minPriceLabel = new JLabel("Min: --");
         this.maxPriceLabel = new JLabel("Max: --");
@@ -52,12 +54,9 @@ public class TimeAndSalesHeader extends JPanel {
         add(rightPanel, BorderLayout.EAST);
     }
 
-    public void onTicker(Ticker ticker) {
-        this.ticker = ticker;
-    }
 
     public void refresh() {
-        if (ticker == null) {
+        if (buffer.isEmpty()) {
             lastTradeLabel.setText("--");
             minPriceLabel.setText("Min: --");
             maxPriceLabel.setText("Max: --");
@@ -67,6 +66,7 @@ public class TimeAndSalesHeader extends JPanel {
             return;
         }
 
+        Ticker ticker = buffer.getAt(0);
         lastTradeLabel.setText(String.format("%.2f", ticker.getLastPrice().doubleValue()));
         minPriceLabel.setText(String.format("Min: %.2f", ticker.getLow().doubleValue()));
         maxPriceLabel.setText(String.format("Max: %.2f", ticker.getHigh().doubleValue()));
