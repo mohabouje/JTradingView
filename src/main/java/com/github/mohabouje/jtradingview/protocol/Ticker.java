@@ -148,10 +148,6 @@ public class Ticker {
             return this;
         }
 
-        public Builder change(BigDecimal change) {
-            this.mChange = change;
-            return this;
-        }
 
         public Builder percentageChange(BigDecimal percentageChange) {
             this.mPercentageChange = percentageChange;
@@ -203,8 +199,6 @@ public class Ticker {
                 .internalSymbolId(instrument.getInternalSymbolId())
                 .exchangeId(instrument.getExchangeId())
                 .lastPrice(xchangeTicker.getLast())
-                .change(xchangeTicker.getHigh() != null && xchangeTicker.getLow() != null ?
-                        xchangeTicker.getHigh().subtract(xchangeTicker.getLow()) : null)
                 .percentageChange(xchangeTicker.getPercentageChange())
                 .high(xchangeTicker.getHigh())
                 .low(xchangeTicker.getLow())

@@ -11,12 +11,11 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
     private final CircularBuffer<Trade> buffer;
     private final TimeAndSalesTable table;
     private final TimeAndSalesHeader header;
-    private Ticker ticker = null;
 
     public TimeAndSalesTab() {
         this.buffer = new CircularBuffer<>();
         this.table = new TimeAndSalesTable(buffer);
-        this.header = new TimeAndSalesHeader(buffer);
+        this.header = new TimeAndSalesHeader();
 
         setLayout(new java.awt.BorderLayout());
         add(header, java.awt.BorderLayout.NORTH);
@@ -26,11 +25,13 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
     @Override
     public void onTrade(Trade trade) {
         buffer.add(trade);
+        table.refresh();
     }
 
     @Override
     public void onTicker(Ticker ticker) {
-        this.ticker = ticker;
+        this.header.onTicker(ticker);
+        header.refresh();
     }
 
     @Override
@@ -38,21 +39,5 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
         throw new RuntimeException(throwable);
     }
 
-    public CircularBuffer<Trade> getBuffer() {
-        return buffer;
-    }
-
-    public Ticker getTicker() {
-        return ticker;
-    }
-
-    public TimeAndSalesTable getTable() {
-        return table;
-    }
-
-    public void refresh() {
-        header.refresh();
-        table.refresh();
-    }
 }
 

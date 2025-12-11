@@ -1,6 +1,7 @@
 package com.github.mohabouje.jtradingview.graphical;
 
 import com.github.mohabouje.jtradingview.protocol.OrderSide;
+import com.github.mohabouje.jtradingview.protocol.Ticker;
 import com.github.mohabouje.jtradingview.protocol.Trade;
 import com.github.mohabouje.jtradingview.utility.CircularBuffer;
 
@@ -11,29 +12,39 @@ public class TimeAndSalesHeader extends JPanel {
     private final JLabel lastTradeLabel;
     private final JLabel minPriceLabel;
     private final JLabel maxPriceLabel;
-    private final CircularBuffer<Trade> buffer;
+    private final JLabel volumeLabel;
+    private final JLabel bidLabel;
+    private final JLabel askLabel;
+    private Ticker ticker = null;
 
-    public TimeAndSalesHeader(CircularBuffer<Trade> buffer) {
-        this.buffer = buffer;
+    public TimeAndSalesHeader() {
         this.lastTradeLabel = new JLabel("--");
         this.minPriceLabel = new JLabel("Min: --");
         this.maxPriceLabel = new JLabel("Max: --");
+        this.volumeLabel = new JLabel("Volume: --");
+        this.bidLabel = new JLabel("Bid: --");
+        this.askLabel = new JLabel("Ask: --");
 
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 245));
         setPreferredSize(new Dimension(0, 40));
 
-        lastTradeLabel.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lastTradeLabel.setForeground(Color.BLACK);
-        
-        minPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 10));
-        maxPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+        lastTradeLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));        
+        minPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        maxPriceLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        volumeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        bidLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        askLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 2));
         rightPanel.setBackground(new Color(245, 245, 245));
         rightPanel.add(minPriceLabel);
         rightPanel.add(maxPriceLabel);
+        rightPanel.add(volumeLabel);
+        rightPanel.add(bidLabel);
+        rightPanel.add(askLabel);
+        rightPanel.add(volumeLabel);
         rightPanel.add(new JSeparator(SwingConstants.VERTICAL));
         rightPanel.add(new JLabel("Last:"));
         rightPanel.add(lastTradeLabel);
@@ -41,39 +52,27 @@ public class TimeAndSalesHeader extends JPanel {
         add(rightPanel, BorderLayout.EAST);
     }
 
+    public void onTicker(Ticker ticker) {
+        this.ticker = ticker;
+    }
+
     public void refresh() {
-        if (buffer.isEmpty()) {
+        if (ticker == null) {
             lastTradeLabel.setText("--");
             minPriceLabel.setText("Min: --");
             maxPriceLabel.setText("Max: --");
-            lastTradeLabel.setForeground(Color.BLACK);
+            volumeLabel.setText("Volume: --");
+            bidLabel.setText("Bid: --");
+            askLabel.setText("Ask: --");
             return;
         }
 
-        var lastTrade = buffer.getAt(0);
-        double lastPrice = lastTrade.getPrice().doubleValue();
-        lastTradeLabel.setText(String.format("%.2f", lastPrice));
-        
-        if (lastTrade.getSide() == OrderSide.BUY) {
-            lastTradeLabel.setForeground(new Color(0, 150, 0));
-        } else {
-            lastTradeLabel.setForeground(new Color(200, 0, 0));
-        }
-
-        double minPrice = lastPrice;
-        double maxPrice = lastPrice;
-
-        for (int i = 0; i < buffer.size(); i++) {
-            var trade = buffer.getAt(i);
-            if (trade != null) {
-                double price = trade.getPrice().doubleValue();
-                minPrice = Math.min(minPrice, price);
-                maxPrice = Math.max(maxPrice, price);
-            }
-        }
-
-        minPriceLabel.setText(String.format("Min: %.2f", minPrice));
-        maxPriceLabel.setText(String.format("Max: %.2f", maxPrice));
+        lastTradeLabel.setText(String.format("%.2f", ticker.getLastPrice().doubleValue()));
+        minPriceLabel.setText(String.format("Min: %.2f", ticker.getLow().doubleValue()));
+        maxPriceLabel.setText(String.format("Max: %.2f", ticker.getHigh().doubleValue()));
+        volumeLabel.setText(String.format("Volume: %.2f", ticker.getVolume().doubleValue()));
+        bidLabel.setText(String.format("Bid: %.2f", ticker.getBid().doubleValue()));
+        askLabel.setText(String.format("Ask: %.2f", ticker.getAsk().doubleValue()));
     }
 }
 
