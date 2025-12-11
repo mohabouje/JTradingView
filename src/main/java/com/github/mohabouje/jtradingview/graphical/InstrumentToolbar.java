@@ -66,17 +66,18 @@ public class InstrumentToolbar extends JToolBar {
         }
 
         ExchangeId exchange = (ExchangeId) exchangeComboBox.getSelectedItem();
-        if (exchange != null) {
-            Instrument instrument = Instrument.builder()
-                    .exchangeId(exchange)
-                    .base(Currency.of(base))
-                    .quote(Currency.of(quote))
-                    .build();
-            
-            notifyListeners(instrument);
-            baseField.setText("");
-            quoteField.setText("");
+        if (exchange == null) {
+            return;
         }
+        Instrument instrument = Instrument.builder()
+                                                    .exchangeId(exchange)
+                                                    .base(Currency.of(base))
+                                                    .quote(Currency.of(quote))
+                                                    .build();
+
+        notifyListeners(instrument);
+        baseField.setText("");
+        quoteField.setText("");
     }
 
     public void addSubscriptionListener(Consumer<Instrument> listener) {
