@@ -2,51 +2,34 @@ package com.github.mohabouje.jtradingview.graphical;
 
 import com.github.mohabouje.jtradingview.protocol.Instrument;
 import com.github.mohabouje.jtradingview.protocol.Trade;
-import com.github.mohabouje.jtradingview.streaming.TradeStreamService;
-import com.github.mohabouje.jtradingview.streaming.TradeCircularBuffer;
-import com.github.mohabouje.jtradingview.streaming.TradeListener;
+import com.github.mohabouje.jtradingview.protocol.Ticker;
+import com.github.mohabouje.jtradingview.streaming.StreamService;
+import com.github.mohabouje.jtradingview.streaming.EventListener;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainWindow extends JFrame {
     private final InstrumentToolbar toolbar;
-    private final TradeStreamService tradeStreamService;
-    private final TradeCircularBuffer buffer;
-    private final TimeAndSalesTable table;
+    private final StreamService streamService;
+    private final TimeAndSalesTabbedPane tabbedPane;
 
     public MainWindow() {
         super("JTradingView - Time and Sales");
         
-        this.tradeStreamService = new TradeStreamService();
+        this.streamService = new StreamService();
         this.toolbar = new InstrumentToolbar();
-        this.buffer = new TradeCircularBuffer();
-        this.table = new TimeAndSalesTable(buffer);
-
-        TradeListener listener = new TradeListener() {
-            @Override
-            public void onTrade(Trade trade) {
-                buffer.onTrade(trade);
-                SwingUtilities.invokeLater(table::refresh);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                        MainWindow.this,
-                        "Error receiving trade data:\n" + throwable.getMessage(),
-                        "Trade Stream Error",
-                        JOptionPane.ERROR_MESSAGE
-                ));
-            }
-        };
+        this.tabbedPane = new TimeAndSalesTabbedPane();
 
         initializeWindow();
         toolbar.addSubscriptionListener(instrument -> {
+            var symbolId = instrument.getInternalSymbolId();
+            var tab = tabbedPane.getOrCreateTab(symbolId);
+            tabbedPane.selectTab(symbolId);
             toolbar.setEnabled(false);
             new Thread(() -> {
                 try {
-                    tradeStreamService.subscribe(instrument, listener);
+                    streamService.subscribe(instrument, tab);
                 } catch (Exception e) {
                     SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                             this,
@@ -62,12 +45,16 @@ public class MainWindow extends JFrame {
         });
     }
 
+    public TimeAndSalesTab tabFor(Instrument instrument) {
+        return tabbedPane.getTab(instrument.getInternalSymbolId());
+    }
+
     private void initializeWindow() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         add(toolbar, BorderLayout.NORTH);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        add(tabbedPane, BorderLayout.CENTER);
 
         setSize(1200, 800);
         setLocationRelativeTo(null);
@@ -77,11 +64,11 @@ public class MainWindow extends JFrame {
         return toolbar;
     }
 
-    public TradeStreamService getTradeStreamService() {
-        return tradeStreamService;
+    public StreamService getStreamService() {
+        return streamService;
     }
 
     public void shutdown() {
-        tradeStreamService.shutdown();
+        streamService.shutdown();
     }
 }

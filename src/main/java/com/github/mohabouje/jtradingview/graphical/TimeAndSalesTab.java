@@ -1,28 +1,49 @@
 package com.github.mohabouje.jtradingview.graphical;
 
-import com.github.mohabouje.jtradingview.streaming.TradeCircularBuffer;
+import com.github.mohabouje.jtradingview.protocol.Trade;
+import com.github.mohabouje.jtradingview.protocol.Ticker;
+import com.github.mohabouje.jtradingview.streaming.EventListener;
+import com.github.mohabouje.jtradingview.utility.CircularBuffer;
 
 import javax.swing.*;
 
-public class TimeAndSalesTab extends JScrollPane {
-    private final TradeCircularBuffer buffer;
+public class TimeAndSalesTab extends JPanel implements EventListener {
+    private final CircularBuffer<Trade> buffer;
     private final TimeAndSalesTable table;
-    private final Timer refreshTimer;
+    private final TimeAndSalesHeader header;
+    private Ticker ticker = null;
 
     public TimeAndSalesTab() {
-        this.buffer = new TradeCircularBuffer();
+        this.buffer = new CircularBuffer<>();
         this.table = new TimeAndSalesTable(buffer);
-        this.refreshTimer = new Timer(50, e -> refresh());
-        
-        setViewportView(table);
-        setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        this.header = new TimeAndSalesHeader(buffer);
 
-        refreshTimer.start();
+        setLayout(new java.awt.BorderLayout());
+        add(header, java.awt.BorderLayout.NORTH);
+        add(new JScrollPane(table), java.awt.BorderLayout.CENTER);
     }
 
-    public TradeCircularBuffer getBuffer() {
+    @Override
+    public void onTrade(Trade trade) {
+        buffer.add(trade);
+    }
+
+    @Override
+    public void onTicker(Ticker ticker) {
+        this.ticker = ticker;
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        throw new RuntimeException(throwable);
+    }
+
+    public CircularBuffer<Trade> getBuffer() {
         return buffer;
+    }
+
+    public Ticker getTicker() {
+        return ticker;
     }
 
     public TimeAndSalesTable getTable() {
@@ -30,6 +51,8 @@ public class TimeAndSalesTab extends JScrollPane {
     }
 
     public void refresh() {
+        header.refresh();
         table.refresh();
     }
 }
+

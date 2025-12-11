@@ -1,48 +1,47 @@
-package com.github.mohabouje.jtradingview.streaming;
-
-import com.github.mohabouje.jtradingview.protocol.Trade;
+package com.github.mohabouje.jtradingview.utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class TradeCircularBuffer  {
-    private final Trade[] buffer;
+public class CircularBuffer<T> {
+    private final Object[] buffer;
     private final int capacity;
     private int head = 0;
     private int size = 0;
 
-    public TradeCircularBuffer() {
+    public CircularBuffer() {
         this(1024);
     }
 
-    public TradeCircularBuffer(int capacity) {
-        this.buffer = new Trade[capacity];
+    public CircularBuffer(int capacity) {
+        this.buffer = new Object[capacity];
         this.capacity = capacity;
     }
 
-    public synchronized void onTrade(Trade trade) {
-        buffer[head] = trade;
+    public synchronized void add(T element) {
+        buffer[head] = element;
         head = (head + 1) % capacity;
         if (size < capacity) {
             size++;
         }
     }
 
-
-    public synchronized List<Trade> getTrades() {
-        List<Trade> trades = new ArrayList<>(size);
+    public synchronized List<T> getAll() {
+        List<T> items = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            trades.add(getTradeAt(i));
+            items.add(getAt(i));
         }
-        return trades;
+        return items;
     }
 
-    public synchronized Trade getTradeAt(int index) {
+    @SuppressWarnings("unchecked")
+    public synchronized T getAt(int index) {
         if (index < 0 || index >= size) {
             return null;
         }
         int actualIndex = (head - 1 - index + capacity * 2) % capacity;
-        return buffer[actualIndex];
+        return (T) buffer[actualIndex];
     }
 
     public synchronized int size() {
@@ -68,6 +67,4 @@ public class TradeCircularBuffer  {
     public int capacity() {
         return capacity;
     }
-
 }
-

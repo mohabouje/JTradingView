@@ -16,7 +16,7 @@ public class Instrument {
     }
 
     private static InternalSymbolId createInternalSymbolId(ExchangeId exchangeId, Currency base, Currency quote) {
-        String internal = String.format("%s:%s/%s", exchangeId.name(), base.getValue(), quote.getValue());
+        String internal = String.format("%s/%s", base.getValue(), quote.getValue());
         return InternalSymbolId.of(internal);
     }
 

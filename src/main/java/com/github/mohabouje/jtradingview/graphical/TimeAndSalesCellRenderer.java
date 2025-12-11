@@ -21,7 +21,7 @@ public class TimeAndSalesCellRenderer extends DefaultTableCellRenderer {
             setBackground(table.getSelectionBackground());
             setForeground(table.getSelectionForeground());
         } else {
-            Object sideValue = table.getValueAt(row, 3); // side column
+            Object sideValue = table.getValueAt(row, 3);
             Color rowBackground = DEFAULT_ROW_COLOR;
 
             if (sideValue != null) {

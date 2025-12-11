@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TradeStreamService {
-    private static final Logger logger = LoggerFactory.getLogger(TradeStreamService.class);
+public class StreamService {
+    private static final Logger logger = LoggerFactory.getLogger(StreamService.class);
 
-    private final Map<Instrument, Disposable> activeSubscriptions = new ConcurrentHashMap<>();
+    private final Map<Instrument, Subscription> activeSubscriptions = new ConcurrentHashMap<>();
     private final ExchangeConnectionManager exchangeConnectionManager = new ExchangeConnectionManager();
 
-    public void subscribe(Instrument instrument, TradeListener listener) {
+    public void subscribe(Instrument instrument, EventListener listener) {
         Objects.requireNonNull(instrument, "instrument cannot be null");
         Objects.requireNonNull(listener, "listener cannot be null");
 
@@ -29,43 +29,34 @@ public class TradeStreamService {
 
             logger.info("Subscribing to trades for {} on {}", instrument.getInternalSymbolId(), instrument.getExchangeId());
 
-            Disposable subscription = exchange.getStreamingMarketDataService()
+            Disposable tradeStream = exchange.getStreamingMarketDataService()
                     .getTrades(instrument.toXChangeCurrencyPair())
                     .subscribe(
-                            trade -> {
-                                try {
-                                    Trade protocolTrade = Trade.from(trade, instrument);
-                                    logger.debug("Received trade for {}: {}", instrument, protocolTrade);
-                                    listener.onTrade(protocolTrade);
-                                } catch (Exception e) {
-                                    logger.error("Error processing trade for {}: {}", instrument, e.getMessage(), e);
-                                    listener.onError(e);
-                                }
-                            },
-                            throwable -> {
-                                logger.error("Error in trade stream for {}: {}", instrument, throwable.getMessage(), throwable);
-                                listener.onError(throwable);
-                                activeSubscriptions.remove(instrument);
-                            },
-                            () -> {
-                                logger.info("Trade stream completed for {}", instrument);
-                                activeSubscriptions.remove(instrument);
-                            }
+                            item -> listener.onTrade(Trade.from(item, instrument)),
+                            listener::onError,
+                            () -> {}
                     );
 
+            Disposable tickerStream = exchange.getStreamingMarketDataService()
+                    .getTicker(instrument.toXChangeCurrencyPair())
+                    .subscribe(
+                            item -> listener.onTicker(Ticker.from(item, instrument)),
+                            listener::onError,
+                            () -> {}
+                    );
+
+            Subscription subscription = new Subscription(tradeStream, tickerStream);
             activeSubscriptions.put(instrument, subscription);
 
         } catch (Exception e) {
             logger.error("Failed to subscribe to {}: {}", instrument, e.getMessage(), e);
-            listener.onError(e);
-            throw new RuntimeException("Failed to subscribe to instrument: " + instrument, e);
         }
     }
 
     public boolean unsubscribe(Instrument instrument) {
         Objects.requireNonNull(instrument, "instrument cannot be null");
 
-        Disposable subscription = activeSubscriptions.remove(instrument);
+        Subscription subscription = activeSubscriptions.remove(instrument);
         if (subscription != null) {
             logger.info("Unsubscribing from trades for {}", instrument);
             subscription.dispose();
@@ -79,7 +70,7 @@ public class TradeStreamService {
     }
 
     public void shutdown() {
-        logger.info("Shutting down TradeStreamService");
+        logger.info("Shutting down StreamService");
 
         activeSubscriptions.forEach((instrument, subscription) -> {
             logger.info("Disposing subscription for {}", instrument);
@@ -88,5 +79,24 @@ public class TradeStreamService {
         activeSubscriptions.clear();
 
         exchangeConnectionManager.disconnectAll();
+    }
+
+    private static class Subscription {
+        private final Disposable tradeStream;
+        private final Disposable tickerStream;
+
+        Subscription(Disposable tradeStream, Disposable tickerStream) {
+            this.tradeStream = tradeStream;
+            this.tickerStream = tickerStream;
+        }
+
+        void dispose() {
+            if (tradeStream != null) {
+                tradeStream.dispose();
+            }
+            if (tickerStream != null) {
+                tickerStream.dispose();
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.github.mohabouje.jtradingview.graphical;
 
-import com.github.mohabouje.jtradingview.streaming.TradeCircularBuffer;
+import com.github.mohabouje.jtradingview.protocol.Trade;
+import com.github.mohabouje.jtradingview.utility.CircularBuffer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -9,9 +10,9 @@ import java.awt.*;
 
 public class TimeAndSalesTable extends JTable {
     private final TimeAndSalesTableModel model;
-    private final TradeCircularBuffer buffer;
+    private final CircularBuffer<Trade> buffer;
 
-    public TimeAndSalesTable(TradeCircularBuffer buffer) {
+    public TimeAndSalesTable(CircularBuffer<Trade> buffer) {
         this.buffer = buffer;
         this.model = new TimeAndSalesTableModel(buffer);
         
@@ -56,7 +57,7 @@ public class TimeAndSalesTable extends JTable {
         return model;
     }
 
-    public TradeCircularBuffer getBuffer() {
+    public CircularBuffer<Trade> getBuffer() {
         return buffer;
     }
 }

@@ -1,7 +1,7 @@
 package com.github.mohabouje.jtradingview.graphical;
 
 import com.github.mohabouje.jtradingview.protocol.Trade;
-import com.github.mohabouje.jtradingview.streaming.TradeCircularBuffer;
+import com.github.mohabouje.jtradingview.utility.CircularBuffer;
 
 import javax.swing.table.AbstractTableModel;
 import java.time.format.DateTimeFormatter;
@@ -9,10 +9,10 @@ import java.time.format.DateTimeFormatter;
 public class TimeAndSalesTableModel extends AbstractTableModel {
     private static final String[] COLUMN_NAMES = {"Time", "Exchange", "Symbol", "Side", "Price", "Quantity", "Notional"};
     
-    private final TradeCircularBuffer buffer;
+    private final CircularBuffer<Trade> buffer;
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
-    public TimeAndSalesTableModel(TradeCircularBuffer buffer) {
+    public TimeAndSalesTableModel(CircularBuffer<Trade> buffer) {
         this.buffer = buffer;
     }
 
@@ -37,7 +37,7 @@ public class TimeAndSalesTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Trade trade = buffer.getTradeAt(rowIndex);
+        Trade trade = buffer.getAt(rowIndex);
         if (trade == null) {
             return null;
         }
@@ -55,6 +55,6 @@ public class TimeAndSalesTableModel extends AbstractTableModel {
     }
 
     public Trade getTradeAtRow(int rowIndex) {
-        return buffer.getTradeAt(rowIndex);
+        return buffer.getAt(rowIndex);
     }
 }

@@ -1,47 +1,31 @@
 package com.github.mohabouje.jtradingview.graphical;
 
-import com.github.mohabouje.jtradingview.protocol.ExchangeId;
+import com.github.mohabouje.jtradingview.protocol.InternalSymbolId;
 
 import javax.swing.*;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TimeAndSalesTabbedPane extends JTabbedPane {
-    private final Map<ExchangeId, TimeAndSalesTab> tabs;
+    private final Map<InternalSymbolId, TimeAndSalesTab> tabs = new HashMap<>();
 
-    public TimeAndSalesTabbedPane() {
-        this.tabs = new EnumMap<>(ExchangeId.class);
-        initializeTabs();
-    }
-
-    private void initializeTabs() {
-        for (ExchangeId exchange : ExchangeId.values()) {
+    public TimeAndSalesTab getOrCreateTab(InternalSymbolId symbolId) {
+        return tabs.computeIfAbsent(symbolId, id -> {
             TimeAndSalesTab tab = new TimeAndSalesTab();
-            tabs.put(exchange, tab);
-            addTab(exchange.toString(), tab);
-        }
+            addTab(symbolId.getValue(), tab);
+            return tab;
+        });
     }
 
-    public TimeAndSalesTab getTab(ExchangeId exchange) {
-        return tabs.get(exchange);
+    public TimeAndSalesTab getTab(InternalSymbolId symbolId) {
+        return tabs.get(symbolId);
     }
 
-    public void refreshAll() {
-        tabs.values().forEach(TimeAndSalesTab::refresh);
-    }
-
-    public void refresh(ExchangeId exchange) {
-        TimeAndSalesTab tab = tabs.get(exchange);
+    public void selectTab(InternalSymbolId symbolId) {
+        TimeAndSalesTab tab = tabs.get(symbolId);
         if (tab != null) {
-            tab.refresh();
+            setSelectedComponent(tab);
         }
-    }
-
-    public void selectExchange(ExchangeId exchange) {
-        setSelectedIndex(exchange.ordinal());
-    }
-
-    public ExchangeId getSelectedExchange() {
-        return ExchangeId.values()[getSelectedIndex()];
     }
 }
+
