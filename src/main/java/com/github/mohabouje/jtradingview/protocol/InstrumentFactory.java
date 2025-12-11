@@ -16,8 +16,8 @@ public final class InstrumentFactory {
         return create(ExchangeId.BINANCE, symbol);
     }
 
-    public static Instrument coinbase(String symbol) {
-        return create(ExchangeId.COINBASE, symbol);
+    public static Instrument bybit(String symbol) {
+        return create(ExchangeId.BYBIT, symbol);
     }
 
     public static Instrument kraken(String symbol) {

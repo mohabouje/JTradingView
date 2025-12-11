@@ -78,12 +78,12 @@
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
-            <artifactId>xchange-coinbasepro</artifactId>
+            <artifactId>xchange-bybit</artifactId>
             <version>5.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
-            <artifactId>xchange-stream-coinbasepro</artifactId>
+            <artifactId>xchange-stream-bybit</artifactId>
             <version>5.2.3</version>
         </dependency>
         <dependency>

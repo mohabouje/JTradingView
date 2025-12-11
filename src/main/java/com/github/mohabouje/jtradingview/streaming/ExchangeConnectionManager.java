@@ -1,6 +1,7 @@
 package com.github.mohabouje.jtradingview.streaming;
 
 import com.github.mohabouje.jtradingview.protocol.ExchangeId;
+import info.bitrich.xchangestream.binance.BinanceStreamingExchange;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
@@ -50,15 +51,10 @@ class ExchangeConnectionManager {
     }
 
     private String getExchangeClassName(ExchangeId exchangeId) {
-        switch (exchangeId) {
-            case BINANCE:
-                return "info.bitrich.xchangestream.binance.BinanceStreamingExchange";
-            case COINBASE:
-                return "info.bitrich.xchangestream.coinbasepro.CoinbaseProStreamingExchange";
-            case KRAKEN:
-                return "info.bitrich.xchangestream.kraken.KrakenStreamingExchange";
-            default:
-                throw new IllegalArgumentException("Unsupported exchange: " + exchangeId);
-        }
+        return switch (exchangeId) {
+            case BINANCE -> "info.bitrich.xchangestream.binance.BinanceStreamingExchange";
+            case BYBIT -> "info.bitrich.xchangestream.bybit.BybitStreamingExchange";
+            case KRAKEN -> "info.bitrich.xchangestream.kraken.KrakenStreamingExchange";
+        };
     }
 }
