@@ -12,16 +12,19 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
     private final CircularBuffer<Ticker> tickerBuffer;
     private final TimeAndSalesTable table;
     private final TimeAndSalesHeader header;
+    private final TimeAndSalesChart chart;
 
     public TimeAndSalesTab() {
         this.tradeBuffer  = new CircularBuffer<>();
         this.tickerBuffer = new CircularBuffer<>(1024);
         this.table = new TimeAndSalesTable(tradeBuffer);
         this.header = new TimeAndSalesHeader(tickerBuffer);
+        this.chart = new TimeAndSalesChart(tradeBuffer, tickerBuffer);
 
         setLayout(new java.awt.BorderLayout());
         add(header, java.awt.BorderLayout.NORTH);
-        add(new JScrollPane(table), java.awt.BorderLayout.CENTER);
+        add(chart, java.awt.BorderLayout.CENTER);
+        add(new JScrollPane(table), java.awt.BorderLayout.SOUTH);
     }
 
     @Override
@@ -34,6 +37,7 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
     public void onTicker(Ticker ticker) {
         tickerBuffer.add(ticker);
         header.refresh();
+        chart.refresh();
     }
 
     @Override
