@@ -36,9 +36,9 @@ public class TimeAndSalesHeader extends JPanel {
         setBackground(BG_COLOR);
         setPreferredSize(new Dimension(0, 100));
 
-        styleTickerLabels(lastTradeLabel, 12, Font.BOLD);
-        styleTickerLabels(bidLabel, 12, Font.BOLD);
-        styleTickerLabels(askLabel, 12, Font.BOLD);        
+        styleTickerLabels(lastTradeLabel);
+        styleTickerLabels(bidLabel);
+        styleTickerLabels(askLabel);
         styleTradeLabels(new Color(0, 128, 0), buyCountLabel, buyAvgPriceLabel, buyMinPriceLabel, buyMaxPriceLabel, buyVolLabel);
         styleTradeLabels(new Color(220, 20, 60), sellCountLabel, sellAvgPriceLabel, sellMinPriceLabel, sellMaxPriceLabel, sellVolLabel);
 
@@ -138,8 +138,8 @@ public class TimeAndSalesHeader extends JPanel {
         }
     }
     
-    private void styleTickerLabels(JLabel label, int fontSize, int fontStyle) {
-        label.setFont(new Font("Segoe UI", fontStyle, fontSize));
+    private void styleTickerLabels(JLabel label) {
+        label.setFont(new Font("Segoe UI", 12, Font.BOLD));
         label.setHorizontalAlignment(SwingConstants.CENTER);
     }
 

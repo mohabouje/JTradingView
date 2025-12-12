@@ -1,10 +1,7 @@
 package com.github.mohabouje.jtradingview.graphical;
 
 import com.github.mohabouje.jtradingview.protocol.Instrument;
-import com.github.mohabouje.jtradingview.protocol.Trade;
-import com.github.mohabouje.jtradingview.protocol.Ticker;
 import com.github.mohabouje.jtradingview.streaming.StreamService;
-import com.github.mohabouje.jtradingview.streaming.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,9 +20,7 @@ public class Main {
             MainWindow mainWindow = new MainWindow();
             mainWindow.setVisible(true);
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                mainWindow.shutdown();
-            }));
+            Runtime.getRuntime().addShutdownHook(new Thread(mainWindow::shutdown));
         });
     }
 }

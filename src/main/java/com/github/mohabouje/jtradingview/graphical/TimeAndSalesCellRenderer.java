@@ -1,7 +1,5 @@
 package com.github.mohabouje.jtradingview.graphical;
 
-import com.github.mohabouje.jtradingview.protocol.OrderSide;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;

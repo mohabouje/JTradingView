@@ -1,7 +1,6 @@
 package com.github.mohabouje.jtradingview.protocol;
 
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -2,6 +2,7 @@ package com.github.mohabouje.jtradingview.protocol;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -61,7 +62,7 @@ public class Trade {
         BigDecimal quantity = xchangeTrade.getOriginalAmount();
         
         Instant timestamp = Optional.ofNullable(xchangeTrade.getTimestamp())
-                .map(date -> date.toInstant())
+                .map(Date::toInstant)
                 .orElseGet(Instant::now);
 
         return Trade.builder()

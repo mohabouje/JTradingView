@@ -24,14 +24,7 @@ public class TimeAndSalesChart extends JPanel {
     private static final String SERIES_BUY  = "Buy ↑";
     private static final String SERIES_SELL = "Sell ↓";
 
-    private static class DataPair {
-        final List<Date> x;
-        final List<Double> y;
-
-        DataPair(List<Date> x, List<Double> y) {
-            this.x = x;
-            this.y = y;
-        }
+    private record DataPair(List<Date> x, List<Double> y) {
     }
 
     private final CircularBuffer<Trade> tradeBuffer;
@@ -102,7 +95,7 @@ public class TimeAndSalesChart extends JPanel {
 
 
     public void refresh() {
-        if (tickerBuffer.size() == 0 && tradeBuffer.size() == 0) {
+        if (tickerBuffer.isEmpty() && tradeBuffer.isEmpty()) {
             return;
         }
 
