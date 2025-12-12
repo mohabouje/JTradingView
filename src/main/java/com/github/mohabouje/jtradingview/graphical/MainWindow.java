@@ -34,13 +34,16 @@ public class MainWindow extends JFrame {
         
         toolbar.addSubscriptionListener(instrument -> {
             var symbolId = instrument.getInternalSymbolId();
+            logger.debug("Subscription request received for {}", symbolId);
             var tab = tabbedPane.getOrCreateTab(symbolId);
             tabbedPane.selectTab(symbolId);
             toolbar.setEnabled(false);
             
             executorService.submit(() -> {
+                logger.debug("Background subscription task started for {}", symbolId);
                 try {
                     streamService.subscribe(instrument, tab);
+                    logger.debug("Subscription successful for {}", symbolId);
                 } catch (Exception e) {
                     logger.error("Failed to subscribe to {}", instrument.getInternalSymbolId(), e);
                     SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
@@ -57,7 +60,11 @@ public class MainWindow extends JFrame {
     }
 
     private void startRefreshTimer() {
-        refreshTimer = new Timer(REFRESH_INTERVAL_MS, e -> tabbedPane.refresh());
+        logger.debug("Starting refresh timer with interval {}ms ({}Hz)", REFRESH_INTERVAL_MS, REFRESH_RATE_HZ);
+        refreshTimer = new Timer(REFRESH_INTERVAL_MS, e -> {
+            logger.trace("Refresh tick - updating UI components");
+            tabbedPane.refresh();
+        });
         refreshTimer.start();
     }
 
@@ -91,9 +98,13 @@ public class MainWindow extends JFrame {
     public void shutdown() {
         logger.info("Shutting down MainWindow");
         if (refreshTimer != null && refreshTimer.isRunning()) {
+            logger.debug("Stopping refresh timer");
             refreshTimer.stop();
         }
+        logger.debug("Shutting down executor service");
         executorService.shutdown();
+        logger.debug("Shutting down stream service");
         streamService.shutdown();
+        logger.debug("MainWindow shutdown complete");
     }
 }

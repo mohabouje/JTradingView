@@ -21,10 +21,12 @@ public class StreamService {
         Objects.requireNonNull(listener, "listener cannot be null");
 
         if (activeSubscriptions.containsKey(instrument)) {
+            logger.debug("Subscription rejected - already subscribed to {}", instrument.getInternalSymbolId());
             throw new IllegalStateException("Already subscribed to instrument: " + instrument);
         }
 
         try {
+            logger.debug("Getting exchange connection for {}", instrument.getExchangeId());
             StreamingExchange exchange = exchangeConnectionManager.getOrCreateExchange(
                     instrument.getExchangeId(),
                     instrument.toXChangeCurrencyPair()
@@ -35,21 +37,34 @@ public class StreamService {
             Disposable tradeStream = exchange.getStreamingMarketDataService()
                     .getTrades(instrument.toXChangeCurrencyPair())
                     .subscribe(
-                            item -> listener.onTrade(Trade.from(item, instrument)),
-                            listener::onError,
-                            () -> {}
+                            item -> {
+                                logger.debug("Received trade: {} @ {} for {}", item.getOriginalAmount(), item.getPrice(), instrument.getInternalSymbolId());
+                                listener.onTrade(Trade.from(item, instrument));
+                            },
+                            error -> {
+                                logger.debug("Trade stream error for {}: {}", instrument.getInternalSymbolId(), error.getMessage());
+                                listener.onError(error);
+                            },
+                            () -> logger.debug("Trade stream completed for {}", instrument.getInternalSymbolId())
                     );
 
             Disposable tickerStream = exchange.getStreamingMarketDataService()
                     .getTicker(instrument.toXChangeCurrencyPair())
                     .subscribe(
-                            item -> listener.onTicker(Ticker.from(item, instrument)),
-                            listener::onError,
-                            () -> {}
+                            item -> {
+                                logger.debug("Received ticker: bid={} ask={} for {}", item.getBid(), item.getAsk(), instrument.getInternalSymbolId());
+                                listener.onTicker(Ticker.from(item, instrument));
+                            },
+                            error -> {
+                                logger.debug("Ticker stream error for {}: {}", instrument.getInternalSymbolId(), error.getMessage());
+                                listener.onError(error);
+                            },
+                            () -> logger.debug("Ticker stream completed for {}", instrument.getInternalSymbolId())
                     );
 
             Subscription subscription = new Subscription(tradeStream, tickerStream);
             activeSubscriptions.put(instrument, subscription);
+            logger.debug("Subscription registered for {}, total active subscriptions: {}", instrument.getInternalSymbolId(), activeSubscriptions.size());
 
         } catch (Exception e) {
             logger.error("Failed to subscribe to {}: {}", instrument, e.getMessage(), e);
