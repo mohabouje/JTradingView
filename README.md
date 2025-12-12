@@ -24,17 +24,20 @@ Time and Sales (also known as "the tape") is a real-time display of every execut
 
 ## Technology Stack
 
-- **Java 15** with Swing for the GUI
+- **Java 17** with Swing for the GUI
 - **XChange Streaming** library for exchange connectivity
 - **RxJava 3** for reactive stream processing
 - **SLF4J + Logback** for logging
-- **Swing** for the graphical user interface
+- **XChart** for real-time charting
+- **Maven** for build management
 
 ## Architecture
 
 The application follows a clean separation of concerns:
 
 - **Protocol Layer** - Exchange-agnostic domain models (Trade, Ticker, Instrument)
-- **Streaming Layer** - Manages WebSocket connections and subscriptions to exchanges
-- **Graphical Layer** - Swing-based UI components for data visualization
-- **Utility Layer** - Circular buffers for efficient data storage
+- **Streaming Layer** - Manages WebSocket connections and subscriptions to exchanges via RxJava observables
+- **Graphical Layer** - Swing-based UI components (tables, charts, headers) with EDT-aware threading
+- **Utility Layer** - Thread-safe circular buffers and performance instrumentation
+
+Data flows from exchange WebSocket streams → RxJava → EventListener → CircularBuffer → Swing UI (refreshed at 20 Hz).
