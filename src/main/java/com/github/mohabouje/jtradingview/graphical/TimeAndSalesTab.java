@@ -19,7 +19,7 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
         this.tradeBuffer = new CircularBuffer<>(BUFFER_CAPACITY);
         this.tickerBuffer = new CircularBuffer<>(BUFFER_CAPACITY);
         this.table = new TimeAndSalesTable(tradeBuffer);
-        this.header = new TimeAndSalesHeader(tickerBuffer);
+        this.header = new TimeAndSalesHeader(tickerBuffer, tradeBuffer);
         this.chart = new TimeAndSalesChart(tradeBuffer, tickerBuffer);
 
         setLayout(new java.awt.BorderLayout());
