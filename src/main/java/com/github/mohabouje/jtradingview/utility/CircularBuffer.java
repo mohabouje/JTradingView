@@ -2,6 +2,7 @@ package com.github.mohabouje.jtradingview.utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 
@@ -26,14 +27,24 @@ public class CircularBuffer<T> {
 
     public synchronized List<T> getAll() {
         List<T> items = new ArrayList<>(size);
+        int idx = (head - size + capacity) % capacity;
         for (int i = 0; i < size; i++) {
-            items.add(getAt(i));
+            items.add((T) buffer[idx]);
+            idx = (idx + 1) % capacity;
         }
         return items;
     }
 
     public synchronized Stream<T> stream() {
         return getAll().stream();
+    }
+
+    public synchronized void forEach(Consumer<T> action) {
+        int idx = (head - size + capacity) % capacity;
+        for (int i = 0; i < size; i++) {
+            action.accept((T) buffer[idx]);
+            idx = (idx + 1) % capacity;
+        }
     }
 
     @SuppressWarnings("unchecked")
