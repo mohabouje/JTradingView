@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class TimeAndSalesHeader extends JPanel {
     private static final Color BG_COLOR = new Color(240, 240, 240); 
-    private final JLabel lastTradeLabel = new JLabel("--");
+    private final JLabel lastTradeLabel = new JLabel("Last: --");
     private final JLabel bidLabel = new JLabel("Bid: --");
     private final JLabel askLabel = new JLabel("Ask: --");
     private final JLabel buyCountLabel = new JLabel("Count: --");
@@ -36,11 +36,11 @@ public class TimeAndSalesHeader extends JPanel {
         setBackground(BG_COLOR);
         setPreferredSize(new Dimension(0, 100));
 
-        styleTickerLabels(lastTradeLabel);
-        styleTickerLabels(bidLabel);
-        styleTickerLabels(askLabel);
-        styleTradeLabels(new Color(0, 128, 0), buyCountLabel, buyAvgPriceLabel, buyMinPriceLabel, buyMaxPriceLabel, buyVolLabel);
-        styleTradeLabels(new Color(220, 20, 60), sellCountLabel, sellAvgPriceLabel, sellMinPriceLabel, sellMaxPriceLabel, sellVolLabel);
+        setLabelStyle(new Color(0, 0, 0), lastTradeLabel);
+        setLabelStyle(new Color(0, 128, 0), bidLabel);
+        setLabelStyle(new Color(220, 20, 60), askLabel);
+        setLabelStyle(new Color(0, 128, 0), buyCountLabel, buyAvgPriceLabel, buyMinPriceLabel, buyMaxPriceLabel, buyVolLabel);
+        setLabelStyle(new Color(220, 20, 60), sellCountLabel, sellAvgPriceLabel, sellMinPriceLabel, sellMaxPriceLabel, sellVolLabel);
 
         JPanel tickerPanel = new JPanel();
         tickerPanel.setOpaque(false);
@@ -120,18 +120,14 @@ public class TimeAndSalesHeader extends JPanel {
         volLabel.setText(String.format("Vol: %.2f", stats.totalQty));
     }
     
-    private void styleTradeLabels(Color color, JLabel... labels) {
+    private void setLabelStyle(Color color, JLabel... labels) {
         for (JLabel label : labels) {
             label.setFont(new Font("Segoe UI", Font.PLAIN, 10));
             label.setHorizontalAlignment(SwingConstants.CENTER);
             label.setForeground(color);
         }
     }
-    
-    private void styleTickerLabels(JLabel label) {
-        label.setFont(new Font("Segoe UI", 12, Font.BOLD));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-    }
+
 
     private TradeStats computeTradeStatistics(OrderSide side) {
         return tradeBuffer.stream()

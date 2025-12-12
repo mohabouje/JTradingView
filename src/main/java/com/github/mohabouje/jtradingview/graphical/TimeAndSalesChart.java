@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class TimeAndSalesChart extends JPanel {
 
@@ -114,72 +115,56 @@ public class TimeAndSalesChart extends JPanel {
     }
 
     private DataPair getBidData() {
-        int tickerSize = tickerBuffer.size();
-        List<Date> xBid = new ArrayList<>(tickerSize);
-        List<Double> yBid = new ArrayList<>(tickerSize);
-
-        tickerBuffer.forEach(t -> {
-            if (t == null || t.getBid() == null || t.getTimestamp() == null) {
-                return;
-            }
-            xBid.add(new Date(t.getTimestamp().toEpochMilli()));
-            yBid.add(t.getBid().doubleValue());
-        });
-
-        return new DataPair(xBid, yBid);
+        int capacity = tickerBuffer.size();
+        List<Date> x = new ArrayList<>(capacity);
+        List<Double> y = new ArrayList<>(capacity);
+        tickerBuffer.stream()
+                .filter(t -> t != null && t.getBid() != null && t.getTimestamp() != null)
+                .forEach(t -> {
+                    x.add(new Date(t.getTimestamp().toEpochMilli()));
+                    y.add(t.getBid().doubleValue());
+                });
+        return new DataPair(x, y);
     }
 
     private DataPair getAskData() {
-        int tickerSize = tickerBuffer.size();
-        List<Date> xAsk = new ArrayList<>(tickerSize);
-        List<Double> yAsk = new ArrayList<>(tickerSize);
-
-        tickerBuffer.forEach(t -> {
-            if (t == null || t.getAsk() == null || t.getTimestamp() == null) {
-                return;
-            }
-            xAsk.add(new Date(t.getTimestamp().toEpochMilli()));
-            yAsk.add(t.getAsk().doubleValue());
-        });
-
-        return new DataPair(xAsk, yAsk);
+        int capacity = tickerBuffer.size();
+        List<Date> x = new ArrayList<>(capacity);
+        List<Double> y = new ArrayList<>(capacity);
+        tickerBuffer.stream()
+                .filter(t -> t != null && t.getAsk() != null && t.getTimestamp() != null)
+                .forEach(t -> {
+                    x.add(new Date(t.getTimestamp().toEpochMilli()));
+                    y.add(t.getAsk().doubleValue());
+                });
+        return new DataPair(x, y);
     }
 
     private DataPair getBuyTradeData() {
-        int tradeSize = tradeBuffer.size();
-        List<Date> xBuy = new ArrayList<>(tradeSize);
-        List<Double> yBuy = new ArrayList<>(tradeSize);
-
-        tradeBuffer.forEach(tr -> {
-            if (tr == null || tr.getPrice() == null || tr.getTimestamp() == null) {
-                return;
-            }
-            if (tr.getSide() != OrderSide.BUY) {
-                return;
-            }
-            xBuy.add(new Date(tr.getTimestamp().toEpochMilli()));
-            yBuy.add(tr.getPrice().doubleValue());
-        });
-
-        return new DataPair(xBuy, yBuy);
+        int capacity = tradeBuffer.size();
+        List<Date> x = new ArrayList<>(capacity);
+        List<Double> y = new ArrayList<>(capacity);
+        tradeBuffer.stream()
+                .filter(tr -> tr != null && tr.getPrice() != null && tr.getTimestamp() != null)
+                .filter(tr -> tr.getSide() == OrderSide.BUY)
+                .forEach(tr -> {
+                    x.add(new Date(tr.getTimestamp().toEpochMilli()));
+                    y.add(tr.getPrice().doubleValue());
+                });
+        return new DataPair(x, y);
     }
 
     private DataPair getSellTradeData() {
-        int tradeSize = tradeBuffer.size();
-        List<Date> xSell = new ArrayList<>(tradeSize);
-        List<Double> ySell = new ArrayList<>(tradeSize);
-
-        tradeBuffer.forEach(tr -> {
-            if (tr == null || tr.getPrice() == null || tr.getTimestamp() == null) {
-                return;
-            }
-            if (tr.getSide() != OrderSide.SELL) {
-                return;
-            }
-            xSell.add(new Date(tr.getTimestamp().toEpochMilli()));
-            ySell.add(tr.getPrice().doubleValue());
-        });
-
-        return new DataPair(xSell, ySell);
+        int capacity = tradeBuffer.size();
+        List<Date> x = new ArrayList<>(capacity);
+        List<Double> y = new ArrayList<>(capacity);
+        tradeBuffer.stream()
+                .filter(tr -> tr != null && tr.getPrice() != null && tr.getTimestamp() != null)
+                .filter(tr -> tr.getSide() == OrderSide.SELL)
+                .forEach(tr -> {
+                    x.add(new Date(tr.getTimestamp().toEpochMilli()));
+                    y.add(tr.getPrice().doubleValue());
+                });
+        return new DataPair(x, y);
     }
 }
