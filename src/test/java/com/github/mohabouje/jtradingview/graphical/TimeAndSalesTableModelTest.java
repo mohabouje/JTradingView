@@ -46,7 +46,7 @@ class TimeAndSalesTableModelTest {
         model.refresh();
 
         assertThat(model.getValueAt(0, 1)).isEqualTo(ExchangeId.KRAKEN); // Exchange
-        assertThat(model.getValueAt(0, 2)).asString().contains("BTC-USD"); // Symbol
+        assertThat(model.getValueAt(0, 2)).asString().contains("BTC/USD"); // Symbol
         assertThat(model.getValueAt(0, 3)).isEqualTo(OrderSide.BUY); // Side
         assertThat(model.getValueAt(0, 4)).asString().contains("50000"); // Price
         assertThat(model.getValueAt(0, 5)).asString().contains("0.5"); // Quantity
