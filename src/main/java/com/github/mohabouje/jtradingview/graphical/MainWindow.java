@@ -1,9 +1,10 @@
 package com.github.mohabouje.jtradingview.graphical;
-
+import com.github.mohabouje.jtradingview.utility.Perf;
 import com.github.mohabouje.jtradingview.protocol.Instrument;
 import com.github.mohabouje.jtradingview.streaming.StreamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ public class MainWindow extends JFrame {
 
     public MainWindow() {
         super("JTradingView - Time and Sales");
-        
+
         this.streamService = new StreamService();
         this.toolbar = new InstrumentToolbar();
         this.tabbedPane = new TimeAndSalesTabbedPane();
@@ -33,8 +34,8 @@ public class MainWindow extends JFrame {
         startRefreshTimer();
         
         toolbar.addSubscriptionListener(instrument -> {
+            logger.debug("Subscription request received for {}", instrument);
             var symbolId = instrument.getInternalSymbolId();
-            logger.debug("Subscription request received for {}", symbolId);
             var tab = tabbedPane.getOrCreateTab(symbolId);
             tabbedPane.selectTab(symbolId);
             toolbar.setEnabled(false);
@@ -61,10 +62,7 @@ public class MainWindow extends JFrame {
 
     private void startRefreshTimer() {
         logger.debug("Starting refresh timer with interval {}ms ({}Hz)", REFRESH_INTERVAL_MS, REFRESH_RATE_HZ);
-        refreshTimer = new Timer(REFRESH_INTERVAL_MS, e -> {
-            logger.trace("Refresh tick - updating UI components");
-            tabbedPane.refresh();
-        });
+        refreshTimer = new Timer(REFRESH_INTERVAL_MS, e -> Perf.measure("UI refresh", tabbedPane::refresh));
         refreshTimer.start();
     }
 
