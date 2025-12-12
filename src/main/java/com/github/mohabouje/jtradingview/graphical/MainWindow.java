@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainWindow extends JFrame {
     private static final Logger logger = LoggerFactory.getLogger(MainWindow.class);
@@ -20,6 +22,7 @@ public class MainWindow extends JFrame {
     private final StreamService streamService;
     private final TimeAndSalesTabbedPane tabbedPane;
     private Timer refreshTimer;
+    private final ExecutorService executorService;
 
     public MainWindow() {
         super("JTradingView - Time and Sales");
@@ -27,6 +30,7 @@ public class MainWindow extends JFrame {
         this.streamService = new StreamService();
         this.toolbar = new InstrumentToolbar();
         this.tabbedPane = new TimeAndSalesTabbedPane();
+        this.executorService = Executors.newFixedThreadPool(1);
 
         initializeWindow();
         startRefreshTimer();
@@ -37,7 +41,7 @@ public class MainWindow extends JFrame {
             tabbedPane.selectTab(symbolId);
             toolbar.setEnabled(false);
             
-            new Thread(() -> {
+            executorService.submit(() -> {
                 try {
                     streamService.subscribe(instrument, tab);
                 } catch (Exception e) {
@@ -51,7 +55,7 @@ public class MainWindow extends JFrame {
                 } finally {
                     SwingUtilities.invokeLater(() -> toolbar.setEnabled(true));
                 }
-            }, "Subscription-Thread").start();
+            });
         });
     }
 
@@ -92,6 +96,7 @@ public class MainWindow extends JFrame {
         if (refreshTimer != null && refreshTimer.isRunning()) {
             refreshTimer.stop();
         }
+        executorService.shutdown();
         streamService.shutdown();
     }
 }
