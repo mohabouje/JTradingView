@@ -2,6 +2,7 @@ package com.github.mohabouje.jtradingview.utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 public class CircularBuffer<T> {    
@@ -29,6 +30,10 @@ public class CircularBuffer<T> {
             items.add(getAt(i));
         }
         return items;
+    }
+
+    public synchronized Stream<T> stream() {
+        return getAll().stream();
     }
 
     @SuppressWarnings("unchecked")
