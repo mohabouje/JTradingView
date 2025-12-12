@@ -113,16 +113,6 @@ public class TimeAndSalesHeader extends JPanel {
 
     private void updateTradeStats(OrderSide side, JLabel countLabel, JLabel avgPriceLabel, JLabel minPriceLabel, JLabel maxPriceLabel, JLabel volLabel) {
         TradeStats stats = computeTradeStatistics(side);
-
-        if (stats.count == 0) {
-            countLabel.setText("Count: 0");
-            avgPriceLabel.setText("Avg: --");
-            minPriceLabel.setText("Min: --");
-            maxPriceLabel.setText("Max: --");
-            volLabel.setText("Vol: --");
-            return;
-        }
-
         countLabel.setText(String.format("Count: %d", stats.count));
         avgPriceLabel.setText(String.format("Avg: %.2f", stats.averagePrice));
         minPriceLabel.setText(String.format("Min: %.2f", stats.minPrice));

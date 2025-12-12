@@ -118,15 +118,13 @@ public class TimeAndSalesChart extends JPanel {
         List<Date> xBid = new ArrayList<>(tickerSize);
         List<Double> yBid = new ArrayList<>(tickerSize);
 
-        for (int i = 0; i < tickerSize; i++) {
-            Ticker t = tickerBuffer.getAt(i);
+        tickerBuffer.forEach(t -> {
             if (t == null || t.getBid() == null || t.getTimestamp() == null) {
-                continue;
+                return;
             }
-
             xBid.add(new Date(t.getTimestamp().toEpochMilli()));
             yBid.add(t.getBid().doubleValue());
-        }
+        });
 
         return new DataPair(xBid, yBid);
     }
@@ -136,15 +134,13 @@ public class TimeAndSalesChart extends JPanel {
         List<Date> xAsk = new ArrayList<>(tickerSize);
         List<Double> yAsk = new ArrayList<>(tickerSize);
 
-        for (int i = 0; i < tickerSize; i++) {
-            Ticker t = tickerBuffer.getAt(i);
+        tickerBuffer.forEach(t -> {
             if (t == null || t.getAsk() == null || t.getTimestamp() == null) {
-                continue;
+                return;
             }
-
             xAsk.add(new Date(t.getTimestamp().toEpochMilli()));
             yAsk.add(t.getAsk().doubleValue());
-        }
+        });
 
         return new DataPair(xAsk, yAsk);
     }
@@ -154,17 +150,16 @@ public class TimeAndSalesChart extends JPanel {
         List<Date> xBuy = new ArrayList<>(tradeSize);
         List<Double> yBuy = new ArrayList<>(tradeSize);
 
-        for (int i = 0; i < tradeSize; i++) {
-            Trade tr = tradeBuffer.getAt(i);
+        tradeBuffer.forEach(tr -> {
             if (tr == null || tr.getPrice() == null || tr.getTimestamp() == null) {
-                continue;
+                return;
             }
-
-            if (tr.getSide() == OrderSide.BUY) {
-                xBuy.add(new Date(tr.getTimestamp().toEpochMilli()));
-                yBuy.add(tr.getPrice().doubleValue());
+            if (tr.getSide() != OrderSide.BUY) {
+                return;
             }
-        }
+            xBuy.add(new Date(tr.getTimestamp().toEpochMilli()));
+            yBuy.add(tr.getPrice().doubleValue());
+        });
 
         return new DataPair(xBuy, yBuy);
     }
@@ -174,17 +169,16 @@ public class TimeAndSalesChart extends JPanel {
         List<Date> xSell = new ArrayList<>(tradeSize);
         List<Double> ySell = new ArrayList<>(tradeSize);
 
-        for (int i = 0; i < tradeSize; i++) {
-            Trade tr = tradeBuffer.getAt(i);
+        tradeBuffer.forEach(tr -> {
             if (tr == null || tr.getPrice() == null || tr.getTimestamp() == null) {
-                continue;
+                return;
             }
-
-            if (tr.getSide() == OrderSide.SELL) {
-                xSell.add(new Date(tr.getTimestamp().toEpochMilli()));
-                ySell.add(tr.getPrice().doubleValue());
+            if (tr.getSide() != OrderSide.SELL) {
+                return;
             }
-        }
+            xSell.add(new Date(tr.getTimestamp().toEpochMilli()));
+            ySell.add(tr.getPrice().doubleValue());
+        });
 
         return new DataPair(xSell, ySell);
     }
