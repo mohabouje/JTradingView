@@ -6,8 +6,11 @@ import com.github.mohabouje.jtradingview.streaming.EventListener;
 import com.github.mohabouje.jtradingview.utility.CircularBuffer;
 
 import javax.swing.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TimeAndSalesTab extends JPanel implements EventListener {
+    private static final Logger logger = LoggerFactory.getLogger(TimeAndSalesTab.class);
     private final CircularBuffer<Trade> tradeBuffer;
     private final CircularBuffer<Ticker> tickerBuffer;
     private final TimeAndSalesTable table;
@@ -40,7 +43,15 @@ public class TimeAndSalesTab extends JPanel implements EventListener {
 
     @Override
     public void onError(Throwable throwable) {
-        throw new RuntimeException(throwable);
+        logger.error("Stream error in TimeAndSalesTab", throwable);
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Stream error: " + (throwable.getMessage() != null ? throwable.getMessage() : throwable.toString()),
+                    "Streaming Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        });
     }
 
     public void refresh() {
