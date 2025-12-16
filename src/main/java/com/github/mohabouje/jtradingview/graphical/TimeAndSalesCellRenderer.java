@@ -1,5 +1,6 @@
 package com.github.mohabouje.jtradingview.graphical;
 
+import com.github.mohabouje.jtradingview.protocol.OrderSide;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
@@ -22,12 +23,8 @@ public class TimeAndSalesCellRenderer extends DefaultTableCellRenderer {
             Object sideValue = table.getValueAt(row, 3);
             Color rowBackground = DEFAULT_ROW_COLOR;
 
-            if (sideValue != null) {
-                if ("BUY".equals(sideValue.toString())) {
-                    rowBackground = BUY_COLOR;
-                } else if ("SELL".equals(sideValue.toString())) {
-                    rowBackground = SELL_COLOR;
-                }
+            if (sideValue instanceof OrderSide side) {
+                rowBackground = side == OrderSide.BUY ? BUY_COLOR : SELL_COLOR;
             }
 
             setBackground(rowBackground);
