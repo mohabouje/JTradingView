@@ -2,75 +2,85 @@ package com.github.mohabouje.jtradingview.utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-
-public class CircularBuffer<T> {    
+public class CircularBuffer<T> {
     private final Object[] buffer;
     private final int capacity;
-    private int head = 0;
-    private int size = 0;
+    private final AtomicInteger head = new AtomicInteger(0);
+    private final AtomicInteger size = new AtomicInteger(0);
 
     public CircularBuffer(int capacity) {
         this.buffer = new Object[capacity];
         this.capacity = capacity;
     }
 
-    public synchronized void add(T element) {
-        buffer[head] = element;
-        head = (head + 1) % capacity;
-        if (size < capacity) {
-            size++;
+    public void add(T element) {
+        int currentHead = head.get();
+        buffer[currentHead] = element;
+        head.set((currentHead + 1) % capacity);
+        
+        if (size.get() < capacity) {
+            size.incrementAndGet();
         }
     }
 
-    public synchronized List<T> getAll() {
-        List<T> items = new ArrayList<>(size);
-        int idx = (head - size + capacity) % capacity;
-        for (int i = 0; i < size; i++) {
+    public List<T> getAll() {
+        int currentHead = head.get();
+        int currentSize = size.get();
+        
+        List<T> items = new ArrayList<>(currentSize);
+        int idx = (currentHead - currentSize + capacity) % capacity;
+        for (int i = 0; i < currentSize; i++) {
             items.add((T) buffer[idx]);
             idx = (idx + 1) % capacity;
         }
         return items;
     }
 
-    public synchronized Stream<T> stream() {
+    public Stream<T> stream() {
         return getAll().stream();
     }
 
-    public synchronized void forEach(Consumer<T> action) {
-        int idx = (head - size + capacity) % capacity;
-        for (int i = 0; i < size; i++) {
+    public void forEach(Consumer<T> action) {
+        int currentHead = head.get();
+        int currentSize = size.get();
+        
+        int idx = (currentHead - currentSize + capacity) % capacity;
+        for (int i = 0; i < currentSize; i++) {
             action.accept((T) buffer[idx]);
             idx = (idx + 1) % capacity;
         }
     }
 
     @SuppressWarnings("unchecked")
-    public synchronized T getAt(int index) {
-        if (index < 0 || index >= size) {
+    public T getAt(int index) {
+        int currentSize = size.get();
+        if (index < 0 || index >= currentSize) {
             return null;
         }
-        int actualIndex = (head - 1 - index + capacity * 2) % capacity;
+        int currentHead = head.get();
+        int actualIndex = (currentHead - 1 - index + capacity * 2) % capacity;
         return (T) buffer[actualIndex];
     }
 
-    public synchronized int size() {
-        return size;
+    public int size() {
+        return size.get();
     }
 
-    public synchronized boolean isEmpty() {
-        return size == 0;
+    public boolean isEmpty() {
+        return size.get() == 0;
     }
 
-    public synchronized boolean isFull() {
-        return size == capacity;
+    public boolean isFull() {
+        return size.get() == capacity;
     }
 
-    public synchronized void clear() {
-        head = 0;
-        size = 0;
+    public void clear() {
+        head.set(0);
+        size.set(0);
         for (int i = 0; i < capacity; i++) {
             buffer[i] = null;
         }
@@ -80,3 +90,4 @@ public class CircularBuffer<T> {
         return capacity;
     }
 }
+
