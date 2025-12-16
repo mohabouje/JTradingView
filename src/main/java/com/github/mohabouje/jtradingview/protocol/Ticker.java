@@ -107,6 +107,21 @@ public class Ticker {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticker ticker = (Ticker) o;
+        return Objects.equals(internalSymbolId, ticker.internalSymbolId) &&
+                Objects.equals(exchangeId, ticker.exchangeId) &&
+                Objects.equals(timestamp, ticker.timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(internalSymbolId, exchangeId, timestamp);
+    }
+
     public static Builder builder() {
         return new Builder();
     }
